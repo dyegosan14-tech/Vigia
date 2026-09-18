@@ -4,9 +4,12 @@
   <%- include('partials/head', { titulo }) %>
 </head>
 <body>
-  <% const statusClasse = (s) => (s === 'operacional' ? 'ok' : s); %>
+  <% const statusClasse = (s) => (s === 'operacional' ? 'ok' : (s || 'ok')); %>
   <% const statusTexto = { operacional: 'Operacional', atencao: 'Atenção', critico: 'Crítico' }; %>
-  <% const custoManutencao = praca.equipamentos.detalhe.reduce((s, eq) => s + eq.quantidade * (eq.custo_manutencao_unitario || 0), 0); %>
+  <% const detalheEquipamentos = (praca.equipamentos && Array.isArray(praca.equipamentos.detalhe)) ? praca.equipamentos.detalhe : []; %>
+  <% const totalEquip = (praca.equipamentos && Number(praca.equipamentos.total)) || 0; %>
+  <% const operacionaisEquip = (praca.equipamentos && Number(praca.equipamentos.operacionais)) || 0; %>
+  <% const custoManutencao = detalheEquipamentos.reduce((s, eq) => s + (Number(eq.quantidade) || 0) * (Number(eq.custo_manutencao_unitario) || 0), 0); %>
 
   <div class="app">
     <%- include('partials/sidebar') %>
@@ -30,7 +33,7 @@
             <h1 class="topbar-title" style="display: flex; align-items: center; gap: 10px;">
               <%= praca.nome %>
               <span class="status-label <%= statusClasse(praca.status) %>" style="font-size: 11px;">
-                <%= statusTexto[praca.status] %>
+                <%= statusTexto[praca.status] || praca.status %>
               </span>
             </h1>
           </div>
@@ -59,7 +62,7 @@
               </div>
             </div>
             <div class="kpi-value-row">
-              <span class="value"><%= praca.ocupacao_atual %></span>
+              <span class="value"><%= Number(praca.ocupacao_atual) || 0 %></span>
               <span class="unit">%</span>
             </div>
             <div class="kpi-footer">
@@ -68,7 +71,7 @@
           </div>
 
           <!-- Equipment Health -->
-          <div class="kpi-card <%= praca.equipamentos.operacionais === praca.equipamentos.total ? 'ok' : 'warn' %>">
+          <div class="kpi-card <%= (totalEquip > 0 && operacionaisEquip === totalEquip) ? 'ok' : 'warn' %>">
             <div class="kpi-card-header">
               <span class="label">Saúde dos Dispositivos</span>
               <div class="kpi-icon-wrap">
@@ -81,12 +84,12 @@
               </div>
             </div>
             <div class="kpi-value-row">
-              <span class="value"><%= praca.equipamentos.operacionais %></span>
-              <span class="unit">/ <%= praca.equipamentos.total %> ativos</span>
+              <span class="value"><%= operacionaisEquip %></span>
+              <span class="unit">/ <%= totalEquip %> ativos</span>
             </div>
             <div class="kpi-footer">
-              <span class="trend-badge <%= praca.equipamentos.operacionais === praca.equipamentos.total ? 'positive' : 'negative' %>">
-                <%= ((praca.equipamentos.operacionais / praca.equipamentos.total) * 100).toFixed(0) %>% operando
+              <span class="trend-badge <%= (totalEquip > 0 && operacionaisEquip === totalEquip) ? 'positive' : 'negative' %>">
+                <%= totalEquip > 0 ? Math.round((operacionaisEquip / totalEquip) * 100) : 0 %>% operando
               </span>
             </div>
           </div>
@@ -102,7 +105,7 @@
               </div>
             </div>
             <div class="kpi-value-row">
-              <span class="value"><%= praca.percepcao_seguranca %></span>
+              <span class="value"><%= praca.percepcao_seguranca || '—' %></span>
               <span class="unit">/ 10</span>
             </div>
             <div class="kpi-footer">
@@ -156,7 +159,7 @@
                 <span class="cctv-ai-tag">IA &middot; FLUXO OK</span>
               </div>
               <div class="cctv-overlay-bottom">
-                <div class="cctv-timestamp cctv-clock-sync">18/09/2026 --:--:--</div>
+                <div class="cctv-timestamp cctv-clock-sync">--/--/---- --:--:--</div>
                 <div class="cctv-live-tag">1080p &middot; 30 FPS</div>
               </div>
             </div>
@@ -172,7 +175,7 @@
                 <span class="cctv-ai-tag" style="color: var(--accent); background: rgba(245, 158, 11, 0.2);">IA &middot; SENSOR ATIVO</span>
               </div>
               <div class="cctv-overlay-bottom">
-                <div class="cctv-timestamp cctv-clock-sync">18/09/2026 --:--:--</div>
+                <div class="cctv-timestamp cctv-clock-sync">--/--/---- --:--:--</div>
                 <div class="cctv-live-tag">1080p &middot; 30 FPS</div>
               </div>
             </div>
@@ -189,26 +192,32 @@
                 </svg>
                 <h2>Equipamentos e Dispositivos em Campo</h2>
               </div>
-              <span class="meta"><%= praca.equipamentos.detalhe.length %> tipos instalados</span>
+              <span class="meta"><%= detalheEquipamentos.length %> tipos instalados</span>
             </div>
 
             <div class="equip-grid">
-              <% praca.equipamentos.detalhe.forEach((eq) => {
-                   const pct = eq.quantidade > 0 ? (eq.operacionais / eq.quantidade) * 100 : 0;
+              <% if (detalheEquipamentos.length === 0) { %>
+                <div class="empty-state" style="grid-column: 1 / -1;">Nenhum detalhe de equipamento cadastrado.</div>
+              <% } %>
+              <% detalheEquipamentos.forEach((eq) => {
+                   const qtd = Number(eq.quantidade) || 0;
+                   const op = Number(eq.operacionais) || 0;
+                   const pct = qtd > 0 ? (op / qtd) * 100 : 0;
                    const estadoSaude = pct === 100 ? 'ok' : pct >= 50 ? 'warn' : 'critical';
-                   const custoTotal = eq.quantidade * (eq.custo_manutencao_unitario || 0);
+                   const custoTotal = qtd * (Number(eq.custo_manutencao_unitario) || 0);
+                   const nomeTipo = String(eq.tipo || '');
               %>
                 <div class="equip-card">
                   <div class="equip-card-top">
                     <span class="equip-card-name">
-                      <% if (eq.tipo.includes('Camera')) { %>📹<% } %>
-                      <% if (eq.tipo.includes('Iluminacao')) { %>💡<% } %>
-                      <% if (eq.tipo.includes('panico')) { %>🚨<% } %>
-                      <% if (eq.tipo.includes('fluxo')) { %>📡<% } %>
-                      <%= eq.tipo %>
+                      <% if (nomeTipo.includes('Camera')) { %>📹<% } %>
+                      <% if (nomeTipo.includes('Iluminacao')) { %>💡<% } %>
+                      <% if (nomeTipo.includes('panico')) { %>🚨<% } %>
+                      <% if (nomeTipo.includes('fluxo')) { %>📡<% } %>
+                      <%= nomeTipo %>
                     </span>
                     <span class="status-label <%= estadoSaude %>" style="font-size: 11px;">
-                      <%= eq.operacionais %> / <%= eq.quantidade %>
+                      <%= op %> / <%= qtd %>
                     </span>
                   </div>
                   <div class="equip-health-bar">
@@ -244,38 +253,39 @@
             <div class="panel-header">
               <div class="panel-header-left">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--status-critical)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
+                  <circle cx="12" cy="10" r="3"></circle>
                   <line x1="12" y1="8" x2="12" y2="12"></line>
                   <line x1="12" y1="16" x2="12.01" y2="16"></line>
                 </svg>
                 <h2>Histórico de Ocorrências</h2>
               </div>
-              <span class="meta"><%= eventos.length %> registros</span>
+              <span class="meta"><%= Array.isArray(eventos) ? eventos.length : 0 %> registros</span>
             </div>
             <div class="panel-body" style="max-height: 400px; overflow-y: auto;">
-              <% if (eventos.length === 0) { %>
+              <% if (!Array.isArray(eventos) || eventos.length === 0) { %>
                 <div class="empty-state">Nenhum evento registrado nesta praça até o momento.</div>
-              <% } %>
-              <% eventos.forEach((o) => {
-                   const hora = new Date(o.timestamp).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
-              %>
-                <div class="event-row">
-                  <div class="event-top">
-                    <span class="event-time"><%= hora %></span>
-                    <span class="badge <%= o.severidade %>"><%= o.severidade %></span>
-                    <span class="badge status-<%= o.status %>"><%= o.status.replace('_', ' ') %></span>
-                    <% if (o.origem === 'cidadao') { %>
-                      <span class="badge origem-cidadao">Denúncia Cidadã</span>
+              <% } else { %>
+                <% eventos.forEach((o) => {
+                     const hora = o && o.timestamp ? new Date(o.timestamp).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+                %>
+                  <div class="event-row">
+                    <div class="event-top">
+                      <span class="event-time"><%= hora %></span>
+                      <span class="badge <%= o.severidade || 'media' %>"><%= o.severidade || 'media' %></span>
+                      <span class="badge status-<%= o.status || 'aberto' %>"><%= String(o.status || 'aberto').replace('_', ' ') %></span>
+                      <% if (o.origem === 'cidadao') { %>
+                        <span class="badge origem-cidadao">Denúncia Cidadã</span>
+                      <% } %>
+                    </div>
+                    <div class="event-tipo"><%= o.tipo %></div>
+                    <% if (o.descricao) { %>
+                      <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                        "<%= o.descricao %>"
+                      </div>
                     <% } %>
                   </div>
-                  <div class="event-tipo"><%= o.tipo %></div>
-                  <% if (o.descricao) { %>
-                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
-                      "<%= o.descricao %>"
-                    </div>
-                  <% } %>
-                </div>
-              <% }) %>
+                <% }) %>
+              <% } %>
             </div>
           </div>
         </div>
@@ -285,7 +295,6 @@
 
   <script src="/js/dashboard.js"></script>
   <script>
-    // Sincronização dos timestamps nas câmeras CFTV
     function atualizarCCTVTicks() {
       const elClocks = document.querySelectorAll('.cctv-clock-sync');
       const agora = new Date();
