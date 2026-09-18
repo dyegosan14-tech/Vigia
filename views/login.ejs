@@ -7,26 +7,58 @@
   <div class="login-shell">
     <div class="login-card">
       <div class="brand">
-        <div><span class="mark"></span><span class="name">Vigia</span></div>
-        <span class="sub">Central de operacoes &middot; pracas publicas</span>
+        <div class="brand-header">
+          <div class="brand-radar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"></path>
+              <path d="M12 6a6 6 0 1 0 6 6 6 6 0 0 0-6-6zm0 10a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"></path>
+              <path d="M12 12 19 5"></path>
+            </svg>
+          </div>
+          <div class="brand-title">
+            <span class="name">Vigia</span>
+            <span class="badge-cicc">CICC &middot; Central de Operações</span>
+          </div>
+        </div>
+        <p style="color: var(--text-muted); font-size: 12px; margin: 8px 0 0;">Autenticação restrita de operadores de campo</p>
       </div>
 
       <form method="POST" action="/login">
-        <label for="usuario">Usuario</label>
-        <input type="text" id="usuario" name="usuario" autocomplete="username" required>
+        <div class="form-group">
+          <label for="usuario">Identificador do Operador</label>
+          <input type="text" id="usuario" name="usuario" class="form-control" autocomplete="username" placeholder="Ex: operador" required>
+        </div>
 
-        <label for="senha">Senha</label>
-        <input type="password" id="senha" name="senha" autocomplete="current-password" required>
+        <div class="form-group">
+          <label for="senha">Chave de Acesso</label>
+          <input type="password" id="senha" name="senha" class="form-control" autocomplete="current-password" placeholder="••••••••" required>
+        </div>
 
-        <button type="submit" class="btn primary">Entrar na central</button>
+        <button type="submit" class="btn primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <polyline points="10 17 15 12 10 7"></polyline>
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+          </svg>
+          Acessar Terminal de Operações
+        </button>
       </form>
 
       <% if (erro) { %>
         <div class="login-error"><%= erro %></div>
       <% } %>
 
-      <div class="login-hint">Acesso de demonstracao: operador / vigia2026</div>
-      <div class="login-hint">Nao e da equipe? <a href="/denuncia" style="color: var(--accent);">Registrar uma denuncia</a> sem precisar de login.</div>
+      <div class="login-hint" style="background: var(--bg-surface-raised); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-top: 20px;">
+        <span style="color: var(--text-secondary); font-weight: 500;">Acesso de Demonstração:</span><br>
+        <code>operador</code> / <code>vigia2026</code>
+      </div>
+
+      <div class="login-hint">
+        É cidadão e quer relatar um problema? <br>
+        <a href="/denuncia" style="color: var(--accent); font-weight: 500; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px;">
+          Acessar Canal de Denúncia Cidadã &rarr;
+        </a>
+      </div>
     </div>
   </div>
 </body>

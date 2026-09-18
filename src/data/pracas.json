@@ -6,6 +6,8 @@
     "status": "operacional",
     "ocupacao_atual": 62,
     "percepcao_seguranca": 7.8,
+    "lat": -8.0607,
+    "lng": -34.8773,
     "equipamentos": {
       "total": 8,
       "operacionais": 8,
@@ -24,6 +26,8 @@
     "status": "atencao",
     "ocupacao_atual": 45,
     "percepcao_seguranca": 6.9,
+    "lat": -8.0387,
+    "lng": -34.9200,
     "equipamentos": {
       "total": 6,
       "operacionais": 5,
@@ -42,6 +46,8 @@
     "status": "operacional",
     "ocupacao_atual": 38,
     "percepcao_seguranca": 7.2,
+    "lat": -8.0585,
+    "lng": -34.8996,
     "equipamentos": {
       "total": 7,
       "operacionais": 7,
@@ -60,6 +66,8 @@
     "status": "critico",
     "ocupacao_atual": 20,
     "percepcao_seguranca": 5.4,
+    "lat": -8.0632,
+    "lng": -34.8942,
     "equipamentos": {
       "total": 6,
       "operacionais": 4,
@@ -78,6 +86,8 @@
     "status": "operacional",
     "ocupacao_atual": 55,
     "percepcao_seguranca": 8.1,
+    "lat": -8.0435,
+    "lng": -34.8920,
     "equipamentos": {
       "total": 7,
       "operacionais": 7,
