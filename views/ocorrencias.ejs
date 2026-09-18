@@ -18,45 +18,45 @@
             </svg>
           </button>
           <div>
-            <h1 class="topbar-title">Fila Geral de Ocorrências</h1>
+            <h1 class="topbar-title">Fila de Despacho e Ocorrências (GMR / COP)</h1>
           </div>
         </div>
 
         <div class="topbar-right">
           <div class="telemetry-time">
             <div class="clock" id="relogio"></div>
-            <div class="update-status"><%= ocorrencias.length %> incidentes listados</div>
+            <div class="update-status"><%= ocorrencias.length %> registros municipais</div>
           </div>
         </div>
       </header>
 
       <div class="content">
         <div class="panel">
-          <!-- Filter Toolbar -->
+          <!-- Barra de Filtros -->
           <form class="filters" method="GET" action="/ocorrencias">
             <div style="display: flex; align-items: center; gap: 8px;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
               </svg>
-              <span style="font-size: 13px; font-weight: 500; color: var(--text-secondary);">Filtrar por:</span>
+              <span style="font-size: 12.5px; font-weight: 600; color: var(--text-secondary);">Filtrar chamados:</span>
             </div>
 
             <select name="praca_id" aria-label="Filtrar por praça">
-              <option value="">Todas as praças</option>
+              <option value="">Todas as praças do Recife</option>
               <% pracas.forEach((p) => { %>
-                <option value="<%= p.id %>" <%= filtros.praca_id === p.id ? 'selected' : '' %>><%= p.nome %></option>
+                <option value="<%= p.id %>" <%= filtros.praca_id === p.id ? 'selected' : '' %>><%= p.nome %> (<%= p.bairro %>)</option>
               <% }) %>
             </select>
 
             <select name="severidade" aria-label="Filtrar por severidade">
-              <option value="">Qualquer severidade</option>
+              <option value="">Todas as gravidades</option>
               <% ['baixa', 'media', 'alta', 'critica'].forEach((s) => { %>
                 <option value="<%= s %>" <%= filtros.severidade === s ? 'selected' : '' %>><%= s.charAt(0).toUpperCase() + s.slice(1) %></option>
               <% }) %>
             </select>
 
             <select name="status" aria-label="Filtrar por status">
-              <option value="">Qualquer status</option>
+              <option value="">Todos os status</option>
               <% ['aberto', 'em_atendimento', 'resolvido'].forEach((s) => { %>
                 <option value="<%= s %>" <%= filtros.status === s ? 'selected' : '' %>><%= s.replace('_', ' ').charAt(0).toUpperCase() + s.replace('_', ' ').slice(1) %></option>
               <% }) %>
@@ -67,7 +67,7 @@
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
-              Aplicar Filtros
+              Filtrar
             </button>
 
             <% if (filtros.praca_id || filtros.severidade || filtros.status) { %>
@@ -77,12 +77,12 @@
 
           <% if (ocorrencias.length === 0) { %>
             <div class="empty-state">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 12px; display: block;">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 10px; display: block;">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="8" x2="12" y2="12"></line>
                 <line x1="12" y1="16" x2="12.01" y2="16"></line>
               </svg>
-              Nenhuma ocorrência encontrada para os filtros selecionados.
+              Nenhum chamado encontrado para os critérios selecionados.
             </div>
           <% } else { %>
             <div style="overflow-x: auto;">
@@ -90,24 +90,24 @@
                 <thead>
                   <tr>
                     <th>Data / Hora</th>
-                    <th>Praça de Origem</th>
-                    <th>Tipo de Incidente</th>
-                    <th>Severidade</th>
-                    <th>Status Atual</th>
-                    <th>Canal / Origem</th>
+                    <th>Praça / Bairro</th>
+                    <th>Tipo de Chamado</th>
+                    <th>Gravidade</th>
+                    <th>Status Operacional</th>
+                    <th>Canal de Entrada</th>
                     <th>Tempo de Resposta</th>
                   </tr>
                 </thead>
                 <tbody>
                   <% ocorrencias.forEach((o) => {
                        const praca = pracas.find((p) => p.id === o.praca_id);
-                       const hora = new Date(o.timestamp).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+                       const hora = o.timestamp ? new Date(o.timestamp).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '—';
                   %>
                     <tr>
-                      <td style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);"><%= hora %></td>
+                      <td style="font-family: var(--font-mono); font-size: 11.5px; color: var(--text-muted);"><%= hora %></td>
                       <td>
-                        <a href="/pracas/<%= o.praca_id %>" style="color: #fff; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <a href="/pracas/<%= o.praca_id %>" style="color: #ffffff; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--pcr-yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"></path>
                             <circle cx="12" cy="10" r="3"></circle>
                           </svg>
@@ -116,15 +116,15 @@
                       </td>
                       <td style="font-weight: 500;"><%= o.tipo %></td>
                       <td><span class="badge <%= o.severidade %>"><%= o.severidade %></span></td>
-                      <td><span class="badge status-<%= o.status %>"><%= o.status.replace('_', ' ') %></span></td>
+                      <td><span class="badge status-<%= o.status %>"><%= String(o.status || '').replace('_', ' ') %></span></td>
                       <td>
                         <% if (o.origem === 'cidadao') { %>
-                          <span class="badge origem-cidadao">Denúncia Cidadã</span>
+                          <span class="badge origem-cidadao">Conecta Recife</span>
                         <% } else { %>
-                          <span class="badge baixa">Sensor / Câmera</span>
+                          <span class="badge baixa">Sensor COP</span>
                         <% } %>
                       </td>
-                      <td style="font-family: var(--font-mono); font-size: 12.5px;">
+                      <td style="font-family: var(--font-mono); font-size: 12px;">
                         <%= o.tempo_resposta_min ? o.tempo_resposta_min + ' min' : '—' %>
                       </td>
                     </tr>
