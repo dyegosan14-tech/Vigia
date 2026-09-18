@@ -3,14 +3,20 @@ const path = require('path');
 
 const ARQUIVO_OCORRENCIAS = path.join(__dirname, '..', 'data', 'ocorrencias.json');
 
-// Grava o array de ocorrencias (compartilhado por referencia entre as
-// rotas via require cache) de volta no JSON, para que denuncias e
-// eventos de sensor sobrevivam a um restart do servidor. Substitui um
-// banco de dados de verdade apenas para os fins deste prototipo.
+// Grava o array de ocorrências usando gravação atômica (.tmp + renameSync)
+// para garantir que o arquivo nunca seja corrompido ou truncado caso o processo seja interrompido.
 function salvarOcorrencias(ocorrencias) {
-  fs.writeFile(ARQUIVO_OCORRENCIAS, JSON.stringify(ocorrencias, null, 2), (erro) => {
-    if (erro) console.error('[Vigia] Falha ao salvar ocorrencias.json:', erro.message);
-  });
+  const tmpArquivo = `${ARQUIVO_OCORRENCIAS}.tmp`;
+  try {
+    const conteudo = JSON.stringify(ocorrencias, null, 2);
+    fs.writeFileSync(tmpArquivo, conteudo, 'utf8');
+    fs.renameSync(tmpArquivo, ARQUIVO_OCORRENCIAS);
+  } catch (erro) {
+    console.error('[Vigia] Falha ao salvar ocorrencias.json de forma atômica:', erro.message);
+    try {
+      if (fs.existsSync(tmpArquivo)) fs.unlinkSync(tmpArquivo);
+    } catch (_) {}
+  }
 }
 
 module.exports = { salvarOcorrencias };
