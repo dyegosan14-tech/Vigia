@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('partials/head', { titulo }) %>
+</head>
+<body>
+  <% const statusClasse = (s) => (s === 'operacional' ? 'ok' : s); %>
+  <% const statusTexto = { operacional: 'Operacional', atencao: 'Atencao', critico: 'Critico' }; %>
+  <% const custoManutencao = praca.equipamentos.detalhe.reduce((s, eq) => s + eq.quantidade * (eq.custo_manutencao_unitario || 0), 0); %>
+
+  <div class="app">
+    <%- include('partials/sidebar') %>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <div class="breadcrumb"><a href="/pracas">Pracas monitoradas</a> / <%= praca.nome %></div>
+          <h1><%= praca.nome %></h1>
+        </div>
+        <span class="clock" id="relogio"></span>
+      </div>
+
+      <div class="content">
+        <div class="kpi-strip">
+          <div class="kpi">
+            <div class="value"><%= praca.ocupacao_atual %><span class="unit">%</span></div>
+            <div class="label">Ocupacao atual</div>
+          </div>
+          <div class="kpi">
+            <div class="value"><%= praca.equipamentos.operacionais %>/<%= praca.equipamentos.total %></div>
+            <div class="label">Equipamentos operacionais</div>
+          </div>
+          <div class="kpi">
+            <div class="value"><%= praca.percepcao_seguranca %><span class="unit">/10</span></div>
+            <div class="label">Percepcao de seguranca</div>
+          </div>
+          <div class="kpi">
+            <div class="value"><span class="status-label <%= statusClasse(praca.status) %>"><%= statusTexto[praca.status] %></span></div>
+            <div class="label">Status geral</div>
+          </div>
+          <div class="kpi">
+            <div class="value">R$ <%= custoManutencao.toLocaleString('pt-BR') %></div>
+            <div class="label">Manutencao estimada / mes</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Equipamentos instalados</h2>
+            </div>
+            <div class="panel-body">
+              <% praca.equipamentos.detalhe.forEach((eq) => { %>
+                <div class="equip-row">
+                  <span><%= eq.tipo %></span>
+                  <span class="equip-count"><%= eq.operacionais %>/<%= eq.quantidade %> operacionais &middot; R$ <%= (eq.quantidade * (eq.custo_manutencao_unitario || 0)).toLocaleString('pt-BR') %>/mes</span>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Historico de eventos</h2>
+            </div>
+            <div class="panel-body">
+              <% if (eventos.length === 0) { %>
+                <div class="empty-state">Nenhum evento registrado nesta praca.</div>
+              <% } %>
+              <% eventos.forEach((o) => {
+                   const hora = new Date(o.timestamp).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+              %>
+                <div class="event-row">
+                  <div class="event-top">
+                    <span class="event-time"><%= hora %></span>
+                    <span class="badge <%= o.severidade %>"><%= o.severidade %></span>
+                    <span class="badge status-<%= o.status %>"><%= o.status.replace('_', ' ') %></span>
+                  </div>
+                  <div class="event-tipo"><%= o.tipo %></div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

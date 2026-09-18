@@ -1,0 +1,17 @@
+<aside class="sidebar">
+  <div class="brand">
+    <div><span class="mark"></span><span class="name">Vigia</span></div>
+    <span class="sub">Central de operacoes &middot; pracas publicas</span>
+  </div>
+  <nav class="nav">
+    <a href="/" class="<%= rotaAtual === '/' ? 'active' : '' %>">Painel geral</a>
+    <a href="/pracas" class="<%= rotaAtual.startsWith('/pracas') ? 'active' : '' %>">Pracas monitoradas</a>
+    <a href="/ocorrencias" class="<%= rotaAtual.startsWith('/ocorrencias') ? 'active' : '' %>">Ocorrencias</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-row">Conectado como <strong><%= usuario %></strong></div>
+    <form action="/logout" method="POST">
+      <button type="submit" class="link-button">Sair da central</button>
+    </form>
+  </div>
+</aside>

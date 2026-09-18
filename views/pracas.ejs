@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('partials/head', { titulo }) %>
+</head>
+<body>
+  <% const statusClasse = (s) => (s === 'operacional' ? 'ok' : s); %>
+  <% const statusTexto = { operacional: 'Operacional', atencao: 'Atencao', critico: 'Critico' }; %>
+
+  <div class="app">
+    <%- include('partials/sidebar') %>
+
+    <main class="main">
+      <div class="topbar">
+        <h1>Pracas monitoradas</h1>
+        <span class="clock" id="relogio"></span>
+      </div>
+
+      <div class="content">
+        <div class="panel">
+          <div class="panel-header">
+            <h2><%= pracas.length %> pracas cadastradas</h2>
+          </div>
+          <div class="panel-body">
+            <% pracas.forEach((p) => { %>
+              <a class="praca-row" href="/pracas/<%= p.id %>">
+                <span class="dot <%= statusClasse(p.status) %>"></span>
+                <div class="info">
+                  <div class="nome"><%= p.nome %></div>
+                  <div class="bairro"><%= p.bairro %></div>
+                </div>
+                <span class="status-label <%= statusClasse(p.status) %>"><%= statusTexto[p.status] %></span>
+                <span class="equip-count"><%= p.equipamentos.operacionais %>/<%= p.equipamentos.total %> equipamentos</span>
+                <div class="occupancy-bar"><div class="fill" style="width: <%= p.ocupacao_atual %>%"></div></div>
+                <span class="occupancy-pct"><%= p.ocupacao_atual %>%</span>
+              </a>
+            <% }) %>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('partials/head', { titulo }) %>
+</head>
+<body>
+  <% const statusClasse = (s) => (s === 'operacional' ? 'ok' : s); %>
+  <% const statusTexto = { operacional: 'Operacional', atencao: 'Atencao', critico: 'Critico' }; %>
+
+  <div class="app">
+    <%- include('partials/sidebar') %>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1>Painel geral</h1>
+        </div>
+        <div style="text-align: right;">
+          <span class="clock" id="relogio"></span>
+          <div class="event-praca" id="ultima-atualizacao" style="margin-top: 2px;">Atualizacao automatica a cada 15s</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="kpi-strip">
+          <div class="kpi">
+            <div class="value" id="kpi-uptime"><%= kpis.uptimePct %><span class="unit">%</span></div>
+            <div class="label">Equipamentos operacionais</div>
+          </div>
+          <div class="kpi">
+            <div class="value" id="kpi-abertas"><%= kpis.ocorrenciasAbertas %></div>
+            <div class="label">Ocorrencias em aberto</div>
+          </div>
+          <div class="kpi">
+            <div class="value" id="kpi-tempo"><%= kpis.tempoMedioResposta ?? '—' %><span class="unit">min</span></div>
+            <div class="label">Tempo medio de resposta</div>
+          </div>
+          <div class="kpi">
+            <div class="value" id="kpi-uso"><%= kpis.usoMedio %><span class="unit">%</span></div>
+            <div class="label">Ocupacao media das pracas</div>
+          </div>
+          <div class="kpi">
+            <div class="value" id="kpi-percepcao"><%= kpis.percepcaoMedia %><span class="unit">/10</span></div>
+            <div class="label">Percepcao de seguranca</div>
+          </div>
+          <div class="kpi">
+            <div class="value" id="kpi-variacao-wrap">
+              <% if (kpis.variacaoOcorrenciasPct === null) { %>
+                <span id="kpi-variacao">—</span>
+              <% } else { %>
+                <span id="kpi-variacao" style="color: <%= kpis.variacaoOcorrenciasPct <= 0 ? 'var(--status-ok)' : 'var(--status-critical)' %>;">
+                  <%= kpis.variacaoOcorrenciasPct > 0 ? '+' : '' %><%= kpis.variacaoOcorrenciasPct %>%
+                </span>
+              <% } %>
+            </div>
+            <div class="label">Ocorrencias vs. 7 dias anteriores</div>
+          </div>
+          <div class="kpi">
+            <div class="value" id="kpi-custo">R$ <%= kpis.custoManutencaoMensal.toLocaleString('pt-BR') %></div>
+            <div class="label">Manutencao estimada / mes</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Pracas monitoradas</h2>
+              <span class="meta"><a href="/pracas">ver todas</a></span>
+            </div>
+            <div class="panel-body">
+              <% pracas.forEach((p) => { %>
+                <a class="praca-row" href="/pracas/<%= p.id %>">
+                  <span class="dot <%= statusClasse(p.status) %>"></span>
+                  <div class="info">
+                    <div class="nome"><%= p.nome %></div>
+                    <div class="bairro"><%= p.bairro %></div>
+                  </div>
+                  <span class="status-label <%= statusClasse(p.status) %>"><%= statusTexto[p.status] %></span>
+                  <div class="occupancy-bar"><div class="fill" style="width: <%= p.ocupacao_atual %>%"></div></div>
+                  <span class="occupancy-pct"><%= p.ocupacao_atual %>%</span>
+                </a>
+              <% }) %>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Ultimas ocorrencias</h2>
+              <span class="meta"><a href="/ocorrencias">ver todas</a></span>
+            </div>
+            <div class="panel-body" id="lista-ultimas-ocorrencias">
+              <% if (ultimasOcorrencias.length === 0) { %>
+                <div class="empty-state">Nenhuma ocorrencia registrada.</div>
+              <% } %>
+              <% ultimasOcorrencias.forEach((o) => {
+                   const praca = pracas.find((p) => p.id === o.praca_id);
+                   const hora = new Date(o.timestamp).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+              %>
+                <div class="event-row">
+                  <div class="event-top">
+                    <span class="event-time"><%= hora %></span>
+                    <span class="badge <%= o.severidade %>"><%= o.severidade %></span>
+                    <span class="badge status-<%= o.status %>"><%= o.status.replace('_', ' ') %></span>
+                    <% if (o.origem === 'cidadao') { %><span class="badge baixa">denuncia cidada</span><% } %>
+                  </div>
+                  <div class="event-tipo"><%= o.tipo %></div>
+                  <div class="event-praca"><%= praca ? praca.nome : o.praca_id %></div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top: 20px;">
+          <div class="panel-header">
+            <h2>Uso das pracas nos ultimos 14 dias</h2>
+            <span class="meta">visitantes estimados por dia</span>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="grafico-tendencia" height="90"></canvas>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script src="/js/dashboard.js"></script>
+  <script>
+    renderizarTendencia(<%- JSON.stringify(tendencia) %>);
+  </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('partials/head', { titulo }) %>
+</head>
+<body>
+  <div class="login-shell">
+    <div class="login-card">
+      <div class="brand">
+        <div><span class="mark"></span><span class="name">Vigia</span></div>
+        <span class="sub">Central de operacoes &middot; pracas publicas</span>
+      </div>
+
+      <form method="POST" action="/login">
+        <label for="usuario">Usuario</label>
+        <input type="text" id="usuario" name="usuario" autocomplete="username" required>
+
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" name="senha" autocomplete="current-password" required>
+
+        <button type="submit" class="btn primary">Entrar na central</button>
+      </form>
+
+      <% if (erro) { %>
+        <div class="login-error"><%= erro %></div>
+      <% } %>
+
+      <div class="login-hint">Acesso de demonstracao: operador / vigia2026</div>
+      <div class="login-hint">Nao e da equipe? <a href="/denuncia" style="color: var(--accent);">Registrar uma denuncia</a> sem precisar de login.</div>
+    </div>
+  </div>
+</body>
+</html>
