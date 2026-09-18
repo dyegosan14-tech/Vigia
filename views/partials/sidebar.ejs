@@ -1,17 +1,80 @@
-<aside class="sidebar">
+<aside class="sidebar" id="app-sidebar">
   <div class="brand">
-    <div><span class="mark"></span><span class="name">Vigia</span></div>
-    <span class="sub">Central de operacoes &middot; pracas publicas</span>
+    <div class="brand-header">
+      <div class="brand-radar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"></path>
+          <path d="M12 6a6 6 0 1 0 6 6 6 6 0 0 0-6-6zm0 10a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"></path>
+          <path d="M12 12 19 5"></path>
+        </svg>
+      </div>
+      <div class="brand-title">
+        <span class="name">Vigia</span>
+        <span class="badge-cicc">CICC &middot; Operações</span>
+      </div>
+    </div>
+    <div class="brand-sub">Monitoramento inteligente e segurança em praças públicas</div>
   </div>
+
   <nav class="nav">
-    <a href="/" class="<%= rotaAtual === '/' ? 'active' : '' %>">Painel geral</a>
-    <a href="/pracas" class="<%= rotaAtual.startsWith('/pracas') ? 'active' : '' %>">Pracas monitoradas</a>
-    <a href="/ocorrencias" class="<%= rotaAtual.startsWith('/ocorrencias') ? 'active' : '' %>">Ocorrencias</a>
+    <span class="nav-category">Monitoramento</span>
+    <a href="/" class="<%= rotaAtual === '/' ? 'active' : '' %>">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7"></rect>
+        <rect x="14" y="3" width="7" height="7"></rect>
+        <rect x="14" y="14" width="7" height="7"></rect>
+        <rect x="3" y="14" width="7" height="7"></rect>
+      </svg>
+      Painel Geral
+    </a>
+    <a href="/pracas" class="<%= rotaAtual.startsWith('/pracas') ? 'active' : '' %>">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"></path>
+        <circle cx="12" cy="10" r="3"></circle>
+      </svg>
+      Praças Monitoradas
+    </a>
+    <a href="/ocorrencias" class="<%= rotaAtual.startsWith('/ocorrencias') ? 'active' : '' %>">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+        <line x1="12" y1="9" x2="12" y2="13"></line>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+      Ocorrências
+    </a>
+
+    <span class="nav-category">Cidadania</span>
+    <a href="/denuncia" target="_blank">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+      Canal de Denúncia
+      <span class="nav-tag">Público</span>
+    </a>
   </nav>
+
   <div class="sidebar-footer">
-    <div class="user-row">Conectado como <strong><%= usuario %></strong></div>
+    <div class="user-profile">
+      <div class="user-avatar">
+        <%= (usuario || 'OP').slice(0, 2).toUpperCase() %>
+      </div>
+      <div class="user-info">
+        <span class="name"><%= usuario || 'Operador' %></span>
+        <span class="role">Central de Comando</span>
+      </div>
+    </div>
     <form action="/logout" method="POST">
-      <button type="submit" class="link-button">Sair da central</button>
+      <button type="submit" class="link-button">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Desconectar da Central
+      </button>
     </form>
   </div>
 </aside>

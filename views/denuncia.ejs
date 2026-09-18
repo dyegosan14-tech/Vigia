@@ -4,60 +4,143 @@
   <%- include('partials/head', { titulo }) %>
 </head>
 <body>
-  <div class="login-shell">
-    <div class="login-card" style="width: 420px;">
-      <div class="brand">
-        <div><span class="mark"></span><span class="name">Vigia</span></div>
-        <span class="sub">Canal de denuncia cidada</span>
+  <div class="citizen-shell">
+    <div class="citizen-container">
+      <div class="citizen-header">
+        <div class="logo-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          Vigia Comunidade &middot; Praças do Recife
+        </div>
+        <h1>Canal de Denúncia Cidadã</h1>
+        <p>Ajude a manter nossas praças públicas seguras e bem conservadas.</p>
       </div>
 
       <% if (enviado) { %>
-        <div class="login-hint" style="color: var(--status-ok); font-size: 14px; margin: 0 0 16px;">
-          Denuncia registrada. A Central de Operacoes foi notificada e vai
-          encaminhar o caso para a praca informada.
+        <div class="success-card">
+          <div class="success-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <h2 style="font-family: var(--font-display); font-size: 20px; margin: 0 0 8px; color: #fff;">Denúncia Registrada com Sucesso</h2>
+          <p style="color: var(--text-secondary); font-size: 14px; margin: 0 0 24px; line-height: 1.6;">
+            A Central Integrada de Operações foi notificada imediatamente e o evento foi integrado à fila de monitoramento da praça indicada.
+          </p>
+          <a href="/denuncia" class="btn primary" style="padding: 10px 24px;">Registrar Nova Denúncia</a>
         </div>
-        <a href="/denuncia" class="btn" style="width: 100%; justify-content: center;">Registrar outra denuncia</a>
       <% } else { %>
-        <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 8px;">
-          Percebeu algo errado em uma praca? Conte pra gente. Nao e preciso
-          se identificar.
-        </p>
+        <div class="privacy-banner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <div>
+            <strong>100% Anônimo e Seguro:</strong> Não solicitamos nome, telefone, e-mail ou documento. Seu relato fortalece a segurança pública sem expor sua identidade.
+          </div>
+        </div>
 
-        <form method="POST" action="/denuncia">
-          <label for="praca_id">Praca</label>
-          <select id="praca_id" name="praca_id" required style="width: 100%; background: var(--surface-raised); border: 1px solid var(--border-strong); color: var(--text-primary); padding: 10px 12px; border-radius: 7px; font-size: 14px;">
-            <option value="" disabled selected>Selecione a praca</option>
-            <% pracas.forEach((p) => { %>
-              <option value="<%= p.id %>"><%= p.nome %> — <%= p.bairro %></option>
-            <% }) %>
-          </select>
+        <form method="POST" action="/denuncia" id="form-denuncia">
+          <!-- Hidden input for type selection -->
+          <input type="hidden" name="tipo" id="tipo-input" required>
 
-          <label for="tipo">O que esta acontecendo?</label>
-          <select id="tipo" name="tipo" required style="width: 100%; background: var(--surface-raised); border: 1px solid var(--border-strong); color: var(--text-primary); padding: 10px 12px; border-radius: 7px; font-size: 14px;">
-            <option value="" disabled selected>Selecione o tipo</option>
-            <option value="Emergencia / preciso de ajuda agora">Emergencia / preciso de ajuda agora</option>
-            <option value="Vandalismo em equipamento">Vandalismo em equipamento</option>
-            <option value="Comportamento suspeito">Comportamento suspeito</option>
-            <option value="Iluminacao com falha">Iluminacao com falha</option>
-            <option value="Outro">Outro</option>
-          </select>
+          <div class="form-group">
+            <label>1. O que você gostaria de relatar?</label>
+            <div class="category-grid">
+              <div class="category-card" data-tipo="Emergencia / preciso de ajuda agora">
+                <span class="category-card-icon">🚨</span>
+                <span class="category-card-title">Emergência Imediata</span>
+              </div>
+              <div class="category-card" data-tipo="Iluminacao com falha">
+                <span class="category-card-icon">💡</span>
+                <span class="category-card-title">Iluminação Falha</span>
+              </div>
+              <div class="category-card" data-tipo="Vandalismo em equipamento">
+                <span class="category-card-icon">🔨</span>
+                <span class="category-card-title">Vandalismo</span>
+              </div>
+              <div class="category-card" data-tipo="Comportamento suspeito">
+                <span class="category-card-icon">👁️</span>
+                <span class="category-card-title">Atitude Suspeita</span>
+              </div>
+              <div class="category-card" data-tipo="Outro">
+                <span class="category-card-icon">📋</span>
+                <span class="category-card-title">Outro Relato</span>
+              </div>
+            </div>
+          </div>
 
-          <label for="descricao">Detalhes (opcional)</label>
-          <textarea id="descricao" name="descricao" rows="3" maxlength="500" style="width: 100%; background: var(--surface-raised); border: 1px solid var(--border-strong); color: var(--text-primary); padding: 10px 12px; border-radius: 7px; font-size: 14px; font-family: inherit; resize: vertical;"></textarea>
+          <div class="form-group">
+            <label for="praca_id">2. Em qual praça está acontecendo?</label>
+            <select id="praca_id" name="praca_id" class="form-control" required>
+              <option value="" disabled selected>Selecione a praça no Recife</option>
+              <% pracas.forEach((p) => { %>
+                <option value="<%= p.id %>"><%= p.nome %> &mdash; Bairro: <%= p.bairro %></option>
+              <% }) %>
+            </select>
+          </div>
 
-          <button type="submit" class="btn primary">Enviar denuncia</button>
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+              <label for="descricao" style="margin-bottom: 0;">3. Detalhes ou ponto de referência (opcional)</label>
+              <span id="char-count" style="font-size: 11px; color: var(--text-muted);">0/500</span>
+            </div>
+            <textarea id="descricao" name="descricao" rows="3" maxlength="500" class="form-control" placeholder="Ex: Próximo aos bancos centrais, perto da estátua..."></textarea>
+          </div>
+
+          <% if (erro) { %>
+            <div class="login-error" style="margin-bottom: 16px;"><%= erro %></div>
+          <% } %>
+
+          <button type="submit" class="btn primary" style="width: 100%; padding: 12px; font-size: 14px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+            Enviar Denúncia à Central
+          </button>
         </form>
 
-        <% if (erro) { %>
-          <div class="login-error"><%= erro %></div>
-        <% } %>
-
-        <div class="login-hint">
-          Este formulario nao pede nome, e-mail ou telefone. Em caso de
-          emergencia em andamento, ligue 190.
+        <div class="login-hint" style="margin-top: 20px;">
+          Em caso de risco grave à vida em andamento, ligue <strong>190 (PM)</strong> ou <strong>153 (Guarda Municipal)</strong>.
         </div>
       <% } %>
     </div>
   </div>
+
+  <script>
+    // Gerenciador dos cards visuais de categoria
+    const cards = document.querySelectorAll('.category-card');
+    const inputTipo = document.getElementById('tipo-input');
+    const form = document.getElementById('form-denuncia');
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        cards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        inputTipo.value = card.getAttribute('data-tipo');
+      });
+    });
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        if (!inputTipo.value) {
+          e.preventDefault();
+          alert('Por favor, selecione o tipo do relato clicando em um dos cards acima.');
+        }
+      });
+    }
+
+    // Contador de caracteres
+    const textarea = document.getElementById('descricao');
+    const counter = document.getElementById('char-count');
+    if (textarea && counter) {
+      textarea.addEventListener('input', () => {
+        counter.textContent = `${textarea.value.length}/500`;
+      });
+    }
+  </script>
 </body>
 </html>
