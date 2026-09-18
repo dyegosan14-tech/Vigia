@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('partials/head', { titulo }) %>
+</head>
+<body>
+  <div class="app">
+    <%- include('partials/sidebar') %>
+
+    <main class="main">
+      <div class="topbar">
+        <h1>Ocorrencias</h1>
+        <span class="clock" id="relogio"></span>
+      </div>
+
+      <div class="content">
+        <div class="panel">
+          <form class="filters" method="GET" action="/ocorrencias">
+            <select name="praca_id">
+              <option value="">Todas as pracas</option>
+              <% pracas.forEach((p) => { %>
+                <option value="<%= p.id %>" <%= filtros.praca_id === p.id ? 'selected' : '' %>><%= p.nome %></option>
+              <% }) %>
+            </select>
+            <select name="severidade">
+              <option value="">Qualquer severidade</option>
+              <% ['baixa', 'media', 'alta', 'critica'].forEach((s) => { %>
+                <option value="<%= s %>" <%= filtros.severidade === s ? 'selected' : '' %>><%= s %></option>
+              <% }) %>
+            </select>
+            <select name="status">
+              <option value="">Qualquer status</option>
+              <% ['aberto', 'em_atendimento', 'resolvido'].forEach((s) => { %>
+                <option value="<%= s %>" <%= filtros.status === s ? 'selected' : '' %>><%= s.replace('_', ' ') %></option>
+              <% }) %>
+            </select>
+            <button type="submit" class="btn">Filtrar</button>
+          </form>
+
+          <% if (ocorrencias.length === 0) { %>
+            <div class="empty-state">Nenhuma ocorrencia encontrada para esse filtro.</div>
+          <% } else { %>
+            <table class="data">
+              <thead>
+                <tr>
+                  <th>Data / hora</th>
+                  <th>Praca</th>
+                  <th>Tipo</th>
+                  <th>Severidade</th>
+                  <th>Status</th>
+                  <th>Origem</th>
+                  <th>Tempo de resposta</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% ocorrencias.forEach((o) => {
+                     const praca = pracas.find((p) => p.id === o.praca_id);
+                     const hora = new Date(o.timestamp).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+                %>
+                  <tr>
+                    <td><%= hora %></td>
+                    <td><a href="/pracas/<%= o.praca_id %>"><%= praca ? praca.nome : o.praca_id %></a></td>
+                    <td><%= o.tipo %></td>
+                    <td><span class="badge <%= o.severidade %>"><%= o.severidade %></span></td>
+                    <td><span class="badge status-<%= o.status %>"><%= o.status.replace('_', ' ') %></span></td>
+                    <td><%= o.origem === 'cidadao' ? 'Denuncia cidada' : 'Sensor / camera' %></td>
+                    <td><%= o.tempo_resposta_min ? o.tempo_resposta_min + ' min' : '—' %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } %>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

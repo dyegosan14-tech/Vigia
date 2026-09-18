@@ -1,0 +1,92 @@
+[
+  {
+    "id": "praca-republica",
+    "nome": "Praca da Republica",
+    "bairro": "Centro",
+    "status": "operacional",
+    "ocupacao_atual": 62,
+    "percepcao_seguranca": 7.8,
+    "equipamentos": {
+      "total": 8,
+      "operacionais": 8,
+      "detalhe": [
+        { "tipo": "Camera com analitica", "quantidade": 3, "operacionais": 3, "custo_manutencao_unitario": 180 },
+        { "tipo": "Iluminacao inteligente", "quantidade": 2, "operacionais": 2, "custo_manutencao_unitario": 60 },
+        { "tipo": "Botao de panico", "quantidade": 2, "operacionais": 2, "custo_manutencao_unitario": 40 },
+        { "tipo": "Sensor de fluxo", "quantidade": 1, "operacionais": 1, "custo_manutencao_unitario": 50 }
+      ]
+    }
+  },
+  {
+    "id": "praca-casa-forte",
+    "nome": "Praca de Casa Forte",
+    "bairro": "Casa Forte",
+    "status": "atencao",
+    "ocupacao_atual": 45,
+    "percepcao_seguranca": 6.9,
+    "equipamentos": {
+      "total": 6,
+      "operacionais": 5,
+      "detalhe": [
+        { "tipo": "Camera com analitica", "quantidade": 2, "operacionais": 1, "custo_manutencao_unitario": 180 },
+        { "tipo": "Iluminacao inteligente", "quantidade": 2, "operacionais": 2, "custo_manutencao_unitario": 60 },
+        { "tipo": "Botao de panico", "quantidade": 1, "operacionais": 1, "custo_manutencao_unitario": 40 },
+        { "tipo": "Sensor de fluxo", "quantidade": 1, "operacionais": 1, "custo_manutencao_unitario": 50 }
+      ]
+    }
+  },
+  {
+    "id": "praca-derby",
+    "nome": "Praca do Derby",
+    "bairro": "Derby",
+    "status": "operacional",
+    "ocupacao_atual": 38,
+    "percepcao_seguranca": 7.2,
+    "equipamentos": {
+      "total": 7,
+      "operacionais": 7,
+      "detalhe": [
+        { "tipo": "Camera com analitica", "quantidade": 3, "operacionais": 3, "custo_manutencao_unitario": 180 },
+        { "tipo": "Iluminacao inteligente", "quantidade": 2, "operacionais": 2, "custo_manutencao_unitario": 60 },
+        { "tipo": "Botao de panico", "quantidade": 1, "operacionais": 1, "custo_manutencao_unitario": 40 },
+        { "tipo": "Sensor de fluxo", "quantidade": 1, "operacionais": 1, "custo_manutencao_unitario": 50 }
+      ]
+    }
+  },
+  {
+    "id": "praca-euclides-da-cunha",
+    "nome": "Praca Euclides da Cunha",
+    "bairro": "Boa Vista",
+    "status": "critico",
+    "ocupacao_atual": 20,
+    "percepcao_seguranca": 5.4,
+    "equipamentos": {
+      "total": 6,
+      "operacionais": 4,
+      "detalhe": [
+        { "tipo": "Camera com analitica", "quantidade": 2, "operacionais": 2, "custo_manutencao_unitario": 180 },
+        { "tipo": "Iluminacao inteligente", "quantidade": 2, "operacionais": 1, "custo_manutencao_unitario": 60 },
+        { "tipo": "Botao de panico", "quantidade": 1, "operacionais": 0, "custo_manutencao_unitario": 40 },
+        { "tipo": "Sensor de fluxo", "quantidade": 1, "operacionais": 1, "custo_manutencao_unitario": 50 }
+      ]
+    }
+  },
+  {
+    "id": "praca-salgado-filho",
+    "nome": "Praca Salgado Filho",
+    "bairro": "Espinheiro",
+    "status": "operacional",
+    "ocupacao_atual": 55,
+    "percepcao_seguranca": 8.1,
+    "equipamentos": {
+      "total": 7,
+      "operacionais": 7,
+      "detalhe": [
+        { "tipo": "Camera com analitica", "quantidade": 3, "operacionais": 3, "custo_manutencao_unitario": 180 },
+        { "tipo": "Iluminacao inteligente", "quantidade": 2, "operacionais": 2, "custo_manutencao_unitario": 60 },
+        { "tipo": "Botao de panico", "quantidade": 1, "operacionais": 1, "custo_manutencao_unitario": 40 },
+        { "tipo": "Sensor de fluxo", "quantidade": 1, "operacionais": 1, "custo_manutencao_unitario": 50 }
+      ]
+    }
+  }
+]
