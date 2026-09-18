@@ -1,6 +1,21 @@
 let mapaInstancia = null;
+let graficoInstancia = null;
+
+// Função utilitária de sanitização para evitar Stored XSS via innerHTML
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 
 function iniciarRelogio() {
+  if (window.__relogioIniciado) return;
+  window.__relogioIniciado = true;
+
   const el = document.getElementById('relogio');
   if (!el) return;
 
@@ -16,6 +31,9 @@ function iniciarRelogio() {
 }
 
 function iniciarMenuMobile() {
+  if (window.__menuMobileIniciado) return;
+  window.__menuMobileIniciado = true;
+
   const btn = document.getElementById('btn-toggle-menu');
   const sidebar = document.getElementById('app-sidebar');
   if (!btn || !sidebar) return;
@@ -34,82 +52,95 @@ function iniciarMenuMobile() {
 
 function iniciarMapa(pracas) {
   const container = document.getElementById('mapa-pracas');
-  if (!container || !window.L || mapaInstancia) return;
+  if (!container || !window.L || mapaInstancia || container._leaflet_id) return;
 
-  // Centro aproximado de Recife
-  mapaInstancia = L.map('mapa-pracas', {
-    zoomControl: false,
-    attributionControl: false
-  }).setView([-8.055, -34.897], 13);
+  try {
+    // Centro aproximado de Recife
+    mapaInstancia = L.map('mapa-pracas', {
+      zoomControl: false,
+      attributionControl: false
+    }).setView([-8.055, -34.897], 13);
 
-  L.control.zoom({ position: 'topright' }).addTo(mapaInstancia);
+    L.control.zoom({ position: 'topright' }).addTo(mapaInstancia);
 
-  // Camada escura tática CartoDB Dark Matter
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    maxZoom: 19,
-    subdomains: 'abcd'
-  }).addTo(mapaInstancia);
+    // Camada escura tática CartoDB Dark Matter
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      subdomains: 'abcd'
+    }).addTo(mapaInstancia);
 
-  const statusTexto = {
-    operacional: 'Operacional',
-    atencao: 'Atenção',
-    critico: 'Crítico'
-  };
+    const statusTexto = {
+      operacional: 'Operacional',
+      atencao: 'Atenção',
+      critico: 'Crítico'
+    };
 
-  pracas.forEach((p) => {
-    if (!p.lat || !p.lng) return;
+    pracas.forEach((p) => {
+      if (!p || !p.lat || !p.lng) return;
 
-    const statusClasse = p.status === 'operacional' ? 'ok' : p.status;
-    const iconHtml = `
-      <div class="custom-pin ${statusClasse}">
-        <div class="custom-pin-pulse"></div>
-        <div class="custom-pin-core"></div>
-      </div>
-    `;
+      const statusClasse = p.status === 'operacional' ? 'ok' : (p.status || 'ok');
+      const iconHtml = `
+        <div class="custom-pin ${escapeHtml(statusClasse)}">
+          <div class="custom-pin-pulse"></div>
+          <div class="custom-pin-core"></div>
+        </div>
+      `;
 
-    const customIcon = L.divIcon({
-      html: iconHtml,
-      className: 'custom-leaflet-marker',
-      iconSize: [22, 22],
-      iconAnchor: [11, 11]
+      const customIcon = L.divIcon({
+        html: iconHtml,
+        className: 'custom-leaflet-marker',
+        iconSize: [22, 22],
+        iconAnchor: [11, 11]
+      });
+
+      const totalEq = p.equipamentos?.total ?? 0;
+      const operacionaisEq = p.equipamentos?.operacionais ?? 0;
+      const ocupacao = Number(p.ocupacao_atual) || 0;
+
+      const popupHtml = `
+        <div class="map-popup-title">${escapeHtml(p.nome)}</div>
+        <div class="map-popup-bairro">${escapeHtml(p.bairro)} &middot; Status: <strong style="color: var(--status-${escapeHtml(statusClasse)})">${escapeHtml(statusTexto[p.status] || p.status)}</strong></div>
+        <div class="map-popup-stat">
+          <span>Ocupação atual:</span>
+          <strong>${ocupacao}%</strong>
+        </div>
+        <div class="map-popup-stat">
+          <span>Equipamentos:</span>
+          <strong>${operacionaisEq}/${totalEq} operacionais</strong>
+        </div>
+        <a href="/pracas/${encodeURIComponent(p.id)}" class="map-popup-link">Abrir monitoramento da praça &rarr;</a>
+      `;
+
+      L.marker([p.lat, p.lng], { icon: customIcon })
+        .addTo(mapaInstancia)
+        .bindPopup(popupHtml);
     });
-
-    const popupHtml = `
-      <div class="map-popup-title">${p.nome}</div>
-      <div class="map-popup-bairro">${p.bairro} &middot; Status: <strong style="color: var(--status-${statusClasse})">${statusTexto[p.status] || p.status}</strong></div>
-      <div class="map-popup-stat">
-        <span>Ocupação atual:</span>
-        <strong>${p.ocupacao_atual}%</strong>
-      </div>
-      <div class="map-popup-stat">
-        <span>Equipamentos:</span>
-        <strong>${p.equipamentos.operacionais}/${p.equipamentos.total} operacionais</strong>
-      </div>
-      <a href="/pracas/${p.id}" class="map-popup-link">Abrir monitoramento da praça &rarr;</a>
-    `;
-
-    L.marker([p.lat, p.lng], { icon: customIcon })
-      .addTo(mapaInstancia)
-      .bindPopup(popupHtml);
-  });
+  } catch (err) {
+    console.warn('[Vigia] Não foi possível carregar o mapa tático:', err);
+  }
 }
 
 function renderizarTendencia(dados) {
   const canvas = document.getElementById('grafico-tendencia');
-  if (!canvas || !window.Chart) return;
+  if (!canvas || !window.Chart || !Array.isArray(dados)) return;
+
+  if (graficoInstancia) {
+    graficoInstancia.destroy();
+    graficoInstancia = null;
+  }
 
   const ctx = canvas.getContext('2d');
   const gradient = ctx.createLinearGradient(0, 0, 0, 200);
   gradient.addColorStop(0, 'rgba(245, 158, 11, 0.28)');
   gradient.addColorStop(1, 'rgba(245, 158, 11, 0.00)');
 
-  new Chart(canvas, {
+  graficoInstancia = new Chart(canvas, {
     type: 'line',
     data: {
-      labels: dados.map((d) => d.data.slice(5)),
+      labels: dados.map((d) => (d.data && d.data.length >= 5 ? d.data.slice(5) : d.data || '')),
       datasets: [{
         label: 'Visitantes estimados',
-        data: dados.map((d) => d.visitantes),
+        data: dados.map((d) => Number(d.visitantes) || 0),
         borderColor: '#f59e0b',
         backgroundColor: gradient,
         borderWidth: 2,
@@ -151,6 +182,9 @@ function renderizarTendencia(dados) {
 }
 
 function iniciarAtualizacaoPainel() {
+  if (window.__atualizacaoIniciada) return;
+  window.__atualizacaoIniciada = true;
+
   const listaOcorrencias = document.getElementById('lista-ultimas-ocorrencias');
   if (!listaOcorrencias) return;
 
@@ -160,12 +194,13 @@ function iniciarAtualizacaoPainel() {
   };
 
   function aplicarKpis(kpis) {
+    if (!kpis) return;
     definirTexto('kpi-uptime', kpis.uptimePct);
     definirTexto('kpi-abertas', kpis.ocorrenciasAbertas);
     definirTexto('kpi-tempo', kpis.tempoMedioResposta ?? '—');
     definirTexto('kpi-uso', kpis.usoMedio);
     definirTexto('kpi-percepcao', kpis.percepcaoMedia);
-    definirTexto('kpi-custo', 'R$ ' + kpis.custoManutencaoMensal.toLocaleString('pt-BR'));
+    definirTexto('kpi-custo', 'R$ ' + (Number(kpis.custoManutencaoMensal) || 0).toLocaleString('pt-BR'));
 
     const variacaoEl = document.getElementById('kpi-variacao');
     const badgeEl = document.getElementById('kpi-variacao-badge');
@@ -185,7 +220,7 @@ function iniciarAtualizacaoPainel() {
   }
 
   function aplicarOcorrencias(lista) {
-    if (!lista.length) {
+    if (!Array.isArray(lista) || !lista.length) {
       listaOcorrencias.innerHTML = '<div class="empty-state">Nenhuma ocorrência registrada no momento.</div>';
       return;
     }
@@ -193,18 +228,18 @@ function iniciarAtualizacaoPainel() {
     listaOcorrencias.innerHTML = lista.map((o) => `
       <div class="event-row">
         <div class="event-top">
-          <span class="event-time">${o.hora}</span>
-          <span class="badge ${o.severidade}">${o.severidade}</span>
-          <span class="badge status-${o.status}">${o.status.replace('_', ' ')}</span>
+          <span class="event-time">${escapeHtml(o.hora)}</span>
+          <span class="badge ${escapeHtml(o.severidade)}">${escapeHtml(o.severidade)}</span>
+          <span class="badge status-${escapeHtml(o.status)}">${escapeHtml(String(o.status || '').replace('_', ' '))}</span>
           ${o.origem === 'cidadao' ? '<span class="badge origem-cidadao">Cidadão</span>' : ''}
         </div>
-        <div class="event-tipo">${o.tipo}</div>
+        <div class="event-tipo">${escapeHtml(o.tipo)}</div>
         <div class="event-praca">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"></path>
             <circle cx="12" cy="10" r="3"></circle>
           </svg>
-          ${o.pracaNome}
+          ${escapeHtml(o.pracaNome)}
         </div>
       </div>
     `).join('');
@@ -236,7 +271,7 @@ function inicializarPainel(config) {
   iniciarAtualizacaoPainel();
 }
 
-// Fallback caso páginas simples só usem relógio e menu
+// Fallback para páginas que só utilizam o relógio e a navegação móvel
 document.addEventListener('DOMContentLoaded', () => {
   iniciarRelogio();
   iniciarMenuMobile();

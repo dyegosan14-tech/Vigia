@@ -4,6 +4,7 @@
   <%- include('partials/head', { titulo }) %>
 </head>
 <body>
+  <% const formDados = dados || {}; %>
   <div class="citizen-shell">
     <div class="citizen-container">
       <div class="citizen-header">
@@ -44,28 +45,28 @@
 
         <form method="POST" action="/denuncia" id="form-denuncia">
           <!-- Hidden input for type selection -->
-          <input type="hidden" name="tipo" id="tipo-input" required>
+          <input type="hidden" name="tipo" id="tipo-input" value="<%= formDados.tipo || '' %>" required>
 
           <div class="form-group">
             <label>1. O que você gostaria de relatar?</label>
             <div class="category-grid">
-              <div class="category-card" data-tipo="Emergencia / preciso de ajuda agora">
+              <div class="category-card <%= formDados.tipo === 'Emergencia / preciso de ajuda agora' ? 'selected' : '' %>" data-tipo="Emergencia / preciso de ajuda agora">
                 <span class="category-card-icon">🚨</span>
                 <span class="category-card-title">Emergência Imediata</span>
               </div>
-              <div class="category-card" data-tipo="Iluminacao com falha">
+              <div class="category-card <%= formDados.tipo === 'Iluminacao com falha' ? 'selected' : '' %>" data-tipo="Iluminacao com falha">
                 <span class="category-card-icon">💡</span>
                 <span class="category-card-title">Iluminação Falha</span>
               </div>
-              <div class="category-card" data-tipo="Vandalismo em equipamento">
+              <div class="category-card <%= formDados.tipo === 'Vandalismo em equipamento' ? 'selected' : '' %>" data-tipo="Vandalismo em equipamento">
                 <span class="category-card-icon">🔨</span>
                 <span class="category-card-title">Vandalismo</span>
               </div>
-              <div class="category-card" data-tipo="Comportamento suspeito">
+              <div class="category-card <%= formDados.tipo === 'Comportamento suspeito' ? 'selected' : '' %>" data-tipo="Comportamento suspeito">
                 <span class="category-card-icon">👁️</span>
                 <span class="category-card-title">Atitude Suspeita</span>
               </div>
-              <div class="category-card" data-tipo="Outro">
+              <div class="category-card <%= formDados.tipo === 'Outro' ? 'selected' : '' %>" data-tipo="Outro">
                 <span class="category-card-icon">📋</span>
                 <span class="category-card-title">Outro Relato</span>
               </div>
@@ -75,9 +76,11 @@
           <div class="form-group">
             <label for="praca_id">2. Em qual praça está acontecendo?</label>
             <select id="praca_id" name="praca_id" class="form-control" required>
-              <option value="" disabled selected>Selecione a praça no Recife</option>
+              <option value="" disabled <%= !formDados.praca_id ? 'selected' : '' %>>Selecione a praça no Recife</option>
               <% pracas.forEach((p) => { %>
-                <option value="<%= p.id %>"><%= p.nome %> &mdash; Bairro: <%= p.bairro %></option>
+                <option value="<%= p.id %>" <%= formDados.praca_id === p.id ? 'selected' : '' %>>
+                  <%= p.nome %> &mdash; Bairro: <%= p.bairro %>
+                </option>
               <% }) %>
             </select>
           </div>
@@ -85,9 +88,11 @@
           <div class="form-group">
             <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
               <label for="descricao" style="margin-bottom: 0;">3. Detalhes ou ponto de referência (opcional)</label>
-              <span id="char-count" style="font-size: 11px; color: var(--text-muted);">0/500</span>
+              <span id="char-count" style="font-size: 11px; color: var(--text-muted);">
+                <%= (formDados.descricao || '').length %>/500
+              </span>
             </div>
-            <textarea id="descricao" name="descricao" rows="3" maxlength="500" class="form-control" placeholder="Ex: Próximo aos bancos centrais, perto da estátua..."></textarea>
+            <textarea id="descricao" name="descricao" rows="3" maxlength="500" class="form-control" placeholder="Ex: Próximo aos bancos centrais, perto da estátua..."><%= formDados.descricao || '' %></textarea>
           </div>
 
           <% if (erro) { %>
@@ -111,7 +116,6 @@
   </div>
 
   <script>
-    // Gerenciador dos cards visuais de categoria
     const cards = document.querySelectorAll('.category-card');
     const inputTipo = document.getElementById('tipo-input');
     const form = document.getElementById('form-denuncia');
@@ -133,7 +137,6 @@
       });
     }
 
-    // Contador de caracteres
     const textarea = document.getElementById('descricao');
     const counter = document.getElementById('char-count');
     if (textarea && counter) {

@@ -7,10 +7,6 @@ const { salvarOcorrencias } = require('../utils/persistencia');
 
 const SEVERIDADES_VALIDAS = ['baixa', 'media', 'alta', 'critica'];
 
-// Ponto de integracao para os sensores e cameras reais (camada de borda).
-// Nesta demo, um unico DEVICE_TOKEN compartilhado protege o endpoint; em
-// producao, use um token individual por dispositivo para poder revogar
-// e auditar por sensor.
 function autenticarDispositivo(req, res, next) {
   const tokenEsperado = process.env.DEVICE_TOKEN;
   if (!tokenEsperado) {
@@ -34,22 +30,35 @@ function autenticarDispositivo(req, res, next) {
 }
 
 router.post('/eventos', autenticarDispositivo, (req, res) => {
-  const { praca_id, tipo, severidade } = req.body;
+  const { praca_id, tipo, severidade } = req.body || {};
 
-  if (!praca_id || !tipo) {
-    return res.status(400).json({ erro: 'Informe praca_id e tipo do evento.' });
+  if (!praca_id || !tipo || typeof praca_id !== 'string' || typeof tipo !== 'string') {
+    return res.status(400).json({ erro: 'Informe praca_id e tipo do evento como textos válidos.' });
   }
 
-  if (!pracas.some((p) => p.id === praca_id)) {
-    return res.status(400).json({ erro: `praca_id desconhecido: ${praca_id}` });
+  const pracaIdLimpo = praca_id.trim();
+  if (!pracas.some((p) => p.id === pracaIdLimpo)) {
+    return res.status(400).json({ erro: `praca_id desconhecido: ${pracaIdLimpo}` });
+  }
+
+  // Sanitiza o tipo: remove tags HTML, caracteres de controle e limita tamanho
+  const tipoSanitizado = tipo
+    .replace(/<[^>]*>/g, '')
+    .replace(/[\x00-\x1F\x7F]/g, '')
+    .trim()
+    .slice(0, 120);
+
+  if (!tipoSanitizado) {
+    return res.status(400).json({ erro: 'O tipo do evento não pode ser vazio.' });
   }
 
   const severidadeValidada = SEVERIDADES_VALIDAS.includes(severidade) ? severidade : 'media';
+  const idUnico = `sensor-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
 
   const novoEvento = {
-    id: `sensor-${Date.now()}`,
-    praca_id,
-    tipo,
+    id: idUnico,
+    praca_id: pracaIdLimpo,
+    tipo: tipoSanitizado,
     severidade: severidadeValidada,
     timestamp: new Date().toISOString(),
     status: 'aberto',
@@ -57,13 +66,9 @@ router.post('/eventos', autenticarDispositivo, (req, res) => {
   };
 
   console.log(
-    `[Evento recebido] praca=${praca_id} tipo=${tipo} severidade=${severidadeValidada}`
+    `[Evento recebido] praca=${pracaIdLimpo} tipo=${tipoSanitizado} severidade=${severidadeValidada}`
   );
 
-  // O array e compartilhado por referencia com as demais rotas (mesmo
-  // padrao usado em src/routes/denuncia.js): o evento ja fica visivel no
-  // painel e na lista de ocorrencias, e a gravacao em disco garante que
-  // sobreviva a um restart do servidor.
   ocorrencias.unshift(novoEvento);
   salvarOcorrencias(ocorrencias);
 
