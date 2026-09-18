@@ -26,7 +26,7 @@
           </button>
           <div>
             <div class="breadcrumb">
-              <a href="/pracas">Praças Monitoradas</a>
+              <a href="/pracas">Praças do Recife (EMLURB)</a>
               <span>/</span>
               <span><%= praca.nome %></span>
             </div>
@@ -42,18 +42,18 @@
         <div class="topbar-right">
           <div class="telemetry-time">
             <div class="clock" id="relogio"></div>
-            <div class="update-status">Bairro: <%= praca.bairro %> &middot; Recife</div>
+            <div class="update-status">Bairro: <%= praca.bairro %> &middot; Recife/PE</div>
           </div>
         </div>
       </header>
 
       <div class="content">
-        <!-- Plaza Key Metrics -->
+        <!-- Indicadores da Praça -->
         <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));">
-          <!-- Occupancy -->
-          <div class="kpi-card accent">
+          <!-- Ocupação -->
+          <div class="kpi-card pcr-accent">
             <div class="kpi-card-header">
-              <span class="label">Ocupação em Tempo Real</span>
+              <span class="label">Taxa de Frequência Local</span>
               <div class="kpi-icon-wrap">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -70,10 +70,10 @@
             </div>
           </div>
 
-          <!-- Equipment Health -->
+          <!-- Saúde dos Dispositivos -->
           <div class="kpi-card <%= (totalEquip > 0 && operacionaisEquip === totalEquip) ? 'ok' : 'warn' %>">
             <div class="kpi-card-header">
-              <span class="label">Saúde dos Dispositivos</span>
+              <span class="label">Dispositivos em Operação</span>
               <div class="kpi-icon-wrap">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
@@ -89,15 +89,15 @@
             </div>
             <div class="kpi-footer">
               <span class="trend-badge <%= (totalEquip > 0 && operacionaisEquip === totalEquip) ? 'positive' : 'negative' %>">
-                <%= totalEquip > 0 ? Math.round((operacionaisEquip / totalEquip) * 100) : 0 %>% operando
+                <%= totalEquip > 0 ? Math.round((operacionaisEquip / totalEquip) * 100) : 0 %>% em serviço
               </span>
             </div>
           </div>
 
-          <!-- Perception -->
+          <!-- Percepção Cidadã -->
           <div class="kpi-card">
             <div class="kpi-card-header">
-              <span class="label">Percepção de Segurança</span>
+              <span class="label">Avaliação dos Frequentadores</span>
               <div class="kpi-icon-wrap">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
@@ -109,14 +109,14 @@
               <span class="unit">/ 10</span>
             </div>
             <div class="kpi-footer">
-              <span class="trend-badge positive">Pesquisa com moradores</span>
+              <span class="trend-badge positive">Índice Conecta Recife</span>
             </div>
           </div>
 
-          <!-- Maintenance Cost -->
-          <div class="kpi-card">
+          <!-- Conservação EMLURB -->
+          <div class="kpi-card pcr-accent">
             <div class="kpi-card-header">
-              <span class="label">Manutenção Estimada</span>
+              <span class="label">Custo Estimado EMLURB</span>
               <div class="kpi-icon-wrap">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="12" y1="1" x2="12" y2="23"></line>
@@ -129,70 +129,93 @@
               <span class="unit">/mês</span>
             </div>
             <div class="kpi-footer">
-              <span class="trend-badge neutral">Contratos municipais</span>
+              <span class="trend-badge neutral">Contrato de conservação</span>
             </div>
           </div>
         </div>
 
-        <!-- Simulated CCTV Grid (Surveillance Cameras) -->
+        <!-- Monitor de Câmeras CFTV (Padrão VMS Profissional do COP) -->
         <div class="panel" style="margin-bottom: 24px;">
           <div class="panel-header">
             <div class="panel-header-left">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--status-critical)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--pcr-yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M23 7l-7 5 7 5V7z"></path>
                 <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
               </svg>
-              <h2>Monitoramento de Câmeras CFTV &middot; <%= praca.nome %></h2>
+              <h2>Central de Vídeo COP Recife &middot; <%= praca.nome %></h2>
             </div>
-            <span class="live-badge" style="font-size: 10px;"><span class="live-pulse"></span> Feeds Ativos</span>
+            <span style="font-size: 11.5px; font-weight: 600; color: var(--status-ok);">
+              ● 2 Canais Conectados
+            </span>
           </div>
 
           <div class="cctv-mosaic">
-            <!-- Camera 1 -->
+            <!-- Canal 01 -->
             <div class="cctv-tile">
-              <div class="cctv-scanlines"></div>
               <div class="cctv-overlay-top">
-                <div class="cctv-rec"><span class="rec-dot"></span> REC</div>
-                <div class="cctv-cam-id">CAM-01 &middot; ALAMEDA PRINCIPAL</div>
+                <div class="cctv-cam-title">
+                  <span class="cctv-online-dot"></span>
+                  CANAL 01 &middot; ALAMEDA PRINCIPAL
+                </div>
+                <div class="cctv-codec-badge">1080p &middot; 30 FPS &middot; H.264</div>
               </div>
-              <div class="cctv-center-target">
-                <span class="cctv-ai-tag">IA &middot; FLUXO OK</span>
+
+              <!-- Indicador discreto de stream -->
+              <div style="text-align: center; color: var(--text-muted); font-size: 12px; z-index: 1;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 6px; display: block; opacity: 0.6;">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Transmissão em Tempo Real &middot; Servidor COP
               </div>
+
               <div class="cctv-overlay-bottom">
                 <div class="cctv-timestamp cctv-clock-sync">--/--/---- --:--:--</div>
-                <div class="cctv-live-tag">1080p &middot; 30 FPS</div>
+                <div class="cctv-controls-mock">
+                  <span class="cctv-btn-pill">PRESET 01</span>
+                  <span class="cctv-btn-pill">PTZ</span>
+                </div>
               </div>
             </div>
 
-            <!-- Camera 2 -->
+            <!-- Canal 02 -->
             <div class="cctv-tile">
-              <div class="cctv-scanlines"></div>
               <div class="cctv-overlay-top">
-                <div class="cctv-rec"><span class="rec-dot"></span> REC</div>
-                <div class="cctv-cam-id">CAM-02 &middot; ÁREA DE CONVIVÊNCIA</div>
+                <div class="cctv-cam-title">
+                  <span class="cctv-online-dot"></span>
+                  CANAL 02 &middot; ÁREA DE CONVIVÊNCIA
+                </div>
+                <div class="cctv-codec-badge">1080p &middot; 30 FPS &middot; H.264</div>
               </div>
-              <div class="cctv-center-target" style="border-color: rgba(245, 158, 11, 0.4);">
-                <span class="cctv-ai-tag" style="color: var(--accent); background: rgba(245, 158, 11, 0.2);">IA &middot; SENSOR ATIVO</span>
+
+              <div style="text-align: center; color: var(--text-muted); font-size: 12px; z-index: 1;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 6px; display: block; opacity: 0.6;">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Transmissão em Tempo Real &middot; Servidor COP
               </div>
+
               <div class="cctv-overlay-bottom">
                 <div class="cctv-timestamp cctv-clock-sync">--/--/---- --:--:--</div>
-                <div class="cctv-live-tag">1080p &middot; 30 FPS</div>
+                <div class="cctv-controls-mock">
+                  <span class="cctv-btn-pill">PRESET 02</span>
+                  <span class="cctv-btn-pill">PTZ</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <div class="grid-2">
-          <!-- Installed Equipment Details -->
+          <!-- Equipamentos Instalados (EMLURB / GMR) -->
           <div class="panel">
             <div class="panel-header">
               <div class="panel-header-left">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--pcr-blue-light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
                 </svg>
-                <h2>Equipamentos e Dispositivos em Campo</h2>
+                <h2>Inventário de Dispositivos (EMLURB / GMR)</h2>
               </div>
-              <span class="meta"><%= detalheEquipamentos.length %> tipos instalados</span>
+              <span class="meta"><%= detalheEquipamentos.length %> categorias cadastradas</span>
             </div>
 
             <div class="equip-grid">
@@ -216,7 +239,7 @@
                       <% if (nomeTipo.includes('fluxo')) { %>📡<% } %>
                       <%= nomeTipo %>
                     </span>
-                    <span class="status-label <%= estadoSaude %>" style="font-size: 11px;">
+                    <span class="status-label <%= estadoSaude %>">
                       <%= op %> / <%= qtd %>
                     </span>
                   </div>
@@ -224,40 +247,40 @@
                     <div class="equip-health-fill <%= estadoSaude %>" style="width: <%= pct %>%;"></div>
                   </div>
                   <div class="equip-card-footer">
-                    <span>Taxa: <%= pct.toFixed(0) %>% operacional</span>
+                    <span>Taxa: <%= pct.toFixed(0) %>% ativo</span>
                     <span>R$ <%= custoTotal.toLocaleString('pt-BR') %>/mês</span>
                   </div>
                 </div>
               <% }) %>
             </div>
 
-            <!-- Central Operational Quick Actions -->
+            <!-- Despacho Municipal Rápido -->
             <div style="padding: 16px 20px; border-top: 1px solid var(--border-subtle); display: flex; gap: 10px; flex-wrap: wrap;">
-              <button class="btn" onclick="alert('Alerta enviado à base da Guarda Municipal para patrulhamento preventivo em <%= praca.nome %>.')">
+              <button class="btn primary" onclick="alert('Solicitação de ronda preventiva enviada ao Centro de Despacho da Guarda Municipal do Recife (GMR).')">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                 </svg>
-                Solicitar Ronda Municipal
+                Despachar Viatura GMR
               </button>
-              <button class="btn" onclick="alert('Ordem de serviço de manutenção aberta no sistema integrado.')">
+              <button class="btn" onclick="alert('Ordem de serviço de reparo aberta no sistema 156 da EMLURB.')">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
                 </svg>
-                Agendar Manutenção
+                Abrir Chamado EMLURB
               </button>
             </div>
           </div>
 
-          <!-- History of Events in Plaza -->
+          <!-- Histórico de Chamados e Ocorrências -->
           <div class="panel">
             <div class="panel-header">
               <div class="panel-header-left">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--status-critical)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="10" r="3"></circle>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--pcr-yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
                   <line x1="12" y1="8" x2="12" y2="12"></line>
                   <line x1="12" y1="16" x2="12.01" y2="16"></line>
                 </svg>
-                <h2>Histórico de Ocorrências</h2>
+                <h2>Histórico de Chamados no Local</h2>
               </div>
               <span class="meta"><%= Array.isArray(eventos) ? eventos.length : 0 %> registros</span>
             </div>
@@ -274,7 +297,7 @@
                       <span class="badge <%= o.severidade || 'media' %>"><%= o.severidade || 'media' %></span>
                       <span class="badge status-<%= o.status || 'aberto' %>"><%= String(o.status || 'aberto').replace('_', ' ') %></span>
                       <% if (o.origem === 'cidadao') { %>
-                        <span class="badge origem-cidadao">Denúncia Cidadã</span>
+                        <span class="badge origem-cidadao">Conecta Recife</span>
                       <% } %>
                     </div>
                     <div class="event-tipo"><%= o.tipo %></div>

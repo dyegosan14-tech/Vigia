@@ -8,15 +8,19 @@
   <div class="citizen-shell">
     <div class="citizen-container">
       <div class="citizen-header">
-        <div class="logo-badge">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>
-          Vigia Comunidade &middot; Praças do Recife
+        <div class="citizen-brand-badge">
+          Prefeitura do Recife &middot; <span>Conecta Recife</span>
         </div>
-        <h1>Canal de Denúncia Cidadã</h1>
-        <p>Ajude a manter nossas praças públicas seguras e bem conservadas.</p>
+        <h1>Cuidando das Nossas Praças</h1>
+        <p>Ajude a Prefeitura e os órgãos municipais a manter os espaços de lazer do Recife seguros, iluminados e bem conservados.</p>
+      </div>
+
+      <!-- Telefones de utilidade pública municipal -->
+      <div class="citizen-phones-bar">
+        <span>Guarda Municipal: <strong>153</strong></span>
+        <span>EMLURB (Luz e Limpeza): <strong>156</strong></span>
+        <span>Polícia Militar: <strong>190</strong></span>
+        <span>SAMU: <strong>192</strong></span>
       </div>
 
       <% if (enviado) { %>
@@ -26,11 +30,11 @@
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
           </div>
-          <h2 style="font-family: var(--font-display); font-size: 20px; margin: 0 0 8px; color: #fff;">Denúncia Registrada com Sucesso</h2>
-          <p style="color: var(--text-secondary); font-size: 14px; margin: 0 0 24px; line-height: 1.6;">
-            A Central Integrada de Operações foi notificada imediatamente e o evento foi integrado à fila de monitoramento da praça indicada.
+          <h2 style="font-family: var(--font-display); font-size: 20px; margin: 0 0 8px; color: #ffffff;">Relato Registrado com Sucesso</h2>
+          <p style="color: var(--text-secondary); font-size: 13.5px; margin: 0 0 22px; line-height: 1.6;">
+            A Central de Operações da Prefeitura do Recife (COP) recebeu sua mensagem e a demanda foi encaminhada para a equipe de monitoramento da praça indicada.
           </p>
-          <a href="/denuncia" class="btn primary" style="padding: 10px 24px;">Registrar Nova Denúncia</a>
+          <a href="/denuncia" class="btn primary" style="padding: 10px 24px;">Registrar Outro Relato</a>
         </div>
       <% } else { %>
         <div class="privacy-banner">
@@ -39,28 +43,28 @@
             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
           </svg>
           <div>
-            <strong>100% Anônimo e Seguro:</strong> Não solicitamos nome, telefone, e-mail ou documento. Seu relato fortalece a segurança pública sem expor sua identidade.
+            <strong>Canal 100% Anônimo e Gratuito:</strong> A Prefeitura do Recife respeita a sua privacidade. Não coletamos nome, e-mail, telefone ou dados de rastreamento.
           </div>
         </div>
 
         <form method="POST" action="/denuncia" id="form-denuncia">
-          <!-- Hidden input for type selection -->
+          <!-- Input oculto para o tipo selecionado -->
           <input type="hidden" name="tipo" id="tipo-input" value="<%= formDados.tipo || '' %>" required>
 
           <div class="form-group">
-            <label>1. O que você gostaria de relatar?</label>
+            <label>1. Qual situação você gostaria de informar?</label>
             <div class="category-grid">
               <div class="category-card <%= formDados.tipo === 'Emergencia / preciso de ajuda agora' ? 'selected' : '' %>" data-tipo="Emergencia / preciso de ajuda agora">
                 <span class="category-card-icon">🚨</span>
-                <span class="category-card-title">Emergência Imediata</span>
+                <span class="category-card-title">Ajuda Imediata</span>
               </div>
               <div class="category-card <%= formDados.tipo === 'Iluminacao com falha' ? 'selected' : '' %>" data-tipo="Iluminacao com falha">
                 <span class="category-card-icon">💡</span>
-                <span class="category-card-title">Iluminação Falha</span>
+                <span class="category-card-title">Lâmpada Apagada</span>
               </div>
               <div class="category-card <%= formDados.tipo === 'Vandalismo em equipamento' ? 'selected' : '' %>" data-tipo="Vandalismo em equipamento">
                 <span class="category-card-icon">🔨</span>
-                <span class="category-card-title">Vandalismo</span>
+                <span class="category-card-title">Dano a Equipamento</span>
               </div>
               <div class="category-card <%= formDados.tipo === 'Comportamento suspeito' ? 'selected' : '' %>" data-tipo="Comportamento suspeito">
                 <span class="category-card-icon">👁️</span>
@@ -74,9 +78,9 @@
           </div>
 
           <div class="form-group">
-            <label for="praca_id">2. Em qual praça está acontecendo?</label>
+            <label for="praca_id">2. Em qual praça do Recife ocorreu?</label>
             <select id="praca_id" name="praca_id" class="form-control" required>
-              <option value="" disabled <%= !formDados.praca_id ? 'selected' : '' %>>Selecione a praça no Recife</option>
+              <option value="" disabled <%= !formDados.praca_id ? 'selected' : '' %>>Selecione a praça ou parque</option>
               <% pracas.forEach((p) => { %>
                 <option value="<%= p.id %>" <%= formDados.praca_id === p.id ? 'selected' : '' %>>
                   <%= p.nome %> &mdash; Bairro: <%= p.bairro %>
@@ -92,7 +96,7 @@
                 <%= (formDados.descricao || '').length %>/500
               </span>
             </div>
-            <textarea id="descricao" name="descricao" rows="3" maxlength="500" class="form-control" placeholder="Ex: Próximo aos bancos centrais, perto da estátua..."><%= formDados.descricao || '' %></textarea>
+            <textarea id="descricao" name="descricao" rows="3" maxlength="500" class="form-control" placeholder="Ex: Próximo à área infantil, perto dos quiosques ou ponto de ônibus..."><%= formDados.descricao || '' %></textarea>
           </div>
 
           <% if (erro) { %>
@@ -100,16 +104,16 @@
           <% } %>
 
           <button type="submit" class="btn primary" style="width: 100%; padding: 12px; font-size: 14px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="22" y1="2" x2="11" y2="13"></line>
               <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
             </svg>
-            Enviar Denúncia à Central
+            Enviar Relato à Prefeitura do Recife
           </button>
         </form>
 
-        <div class="login-hint" style="margin-top: 20px;">
-          Em caso de risco grave à vida em andamento, ligue <strong>190 (PM)</strong> ou <strong>153 (Guarda Municipal)</strong>.
+        <div class="login-hint" style="margin-top: 18px;">
+          Em situações de risco iminente à vida, ligue imediatamente para o <strong>190 (Polícia)</strong> ou <strong>153 (Guarda Municipal)</strong>.
         </div>
       <% } %>
     </div>
@@ -132,7 +136,7 @@
       form.addEventListener('submit', (e) => {
         if (!inputTipo.value) {
           e.preventDefault();
-          alert('Por favor, selecione o tipo do relato clicando em um dos cards acima.');
+          alert('Por favor, escolha uma das categorias de relato acima.');
         }
       });
     }
