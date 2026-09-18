@@ -1,0 +1,120 @@
+[
+  {
+    "id": "oc-101",
+    "praca_id": "praca-euclides-da-cunha",
+    "tipo": "Botao de panico acionado",
+    "severidade": "critica",
+    "timestamp": "2026-09-17T21:14:00-03:00",
+    "status": "em_atendimento",
+    "origem": "sensor"
+  },
+  {
+    "id": "oc-102",
+    "praca_id": "praca-casa-forte",
+    "tipo": "Falha de camera",
+    "severidade": "media",
+    "timestamp": "2026-09-17T18:40:00-03:00",
+    "status": "aberto",
+    "origem": "sensor"
+  },
+  {
+    "id": "oc-100",
+    "praca_id": "praca-republica",
+    "tipo": "Aglomeracao fora do padrao detectada",
+    "severidade": "baixa",
+    "timestamp": "2026-09-17T10:05:00-03:00",
+    "status": "resolvido",
+    "tempo_resposta_min": 9,
+    "origem": "sensor"
+  },
+  {
+    "id": "oc-099",
+    "praca_id": "praca-euclides-da-cunha",
+    "tipo": "Iluminacao com falha reportada",
+    "severidade": "media",
+    "timestamp": "2026-09-16T22:30:00-03:00",
+    "status": "resolvido",
+    "tempo_resposta_min": 210,
+    "origem": "cidadao"
+  },
+  {
+    "id": "oc-098",
+    "praca_id": "praca-derby",
+    "tipo": "Objeto abandonado detectado",
+    "severidade": "media",
+    "timestamp": "2026-09-16T15:12:00-03:00",
+    "status": "resolvido",
+    "tempo_resposta_min": 14,
+    "origem": "sensor"
+  },
+  {
+    "id": "oc-097",
+    "praca_id": "praca-salgado-filho",
+    "tipo": "Botao de panico acionado",
+    "severidade": "critica",
+    "timestamp": "2026-09-15T23:50:00-03:00",
+    "status": "resolvido",
+    "tempo_resposta_min": 6,
+    "origem": "sensor"
+  },
+  {
+    "id": "oc-096",
+    "praca_id": "praca-casa-forte",
+    "tipo": "Vandalismo detectado em totem",
+    "severidade": "alta",
+    "timestamp": "2026-09-15T04:22:00-03:00",
+    "status": "resolvido",
+    "tempo_resposta_min": 95,
+    "origem": "sensor"
+  },
+  {
+    "id": "oc-095",
+    "praca_id": "praca-republica",
+    "tipo": "Aglomeracao fora do padrao detectada",
+    "severidade": "baixa",
+    "timestamp": "2026-09-14T20:18:00-03:00",
+    "status": "resolvido",
+    "tempo_resposta_min": 11,
+    "origem": "sensor"
+  },
+  {
+    "id": "oc-094",
+    "praca_id": "praca-euclides-da-cunha",
+    "tipo": "Falha de camera",
+    "severidade": "media",
+    "timestamp": "2026-09-13T09:47:00-03:00",
+    "status": "resolvido",
+    "tempo_resposta_min": 180,
+    "origem": "sensor"
+  },
+  {
+    "id": "oc-093",
+    "praca_id": "praca-derby",
+    "tipo": "Iluminacao com falha reportada",
+    "severidade": "baixa",
+    "timestamp": "2026-09-12T19:03:00-03:00",
+    "status": "resolvido",
+    "tempo_resposta_min": 40,
+    "origem": "cidadao"
+  },
+  {
+    "id": "oc-092",
+    "praca_id": "praca-salgado-filho",
+    "tipo": "Aglomeracao fora do padrao detectada",
+    "severidade": "baixa",
+    "timestamp": "2026-09-11T21:26:00-03:00",
+    "status": "resolvido",
+    "tempo_resposta_min": 8,
+    "origem": "sensor"
+  },
+  {
+    "id": "oc-091",
+    "praca_id": "praca-republica",
+    "tipo": "Botao de panico acionado",
+    "severidade": "critica",
+    "timestamp": "2026-09-10T23:05:00-03:00",
+    "status": "resolvido",
+    "tempo_resposta_min": 5,
+    "origem": "sensor"
+  }
+]

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <%- include('partials/head', { titulo }) %>
+</head>
+<body>
+  <div class="login-shell">
+    <div class="login-card" style="width: 420px;">
+      <div class="brand">
+        <div><span class="mark"></span><span class="name">Vigia</span></div>
+        <span class="sub">Canal de denuncia cidada</span>
+      </div>
+
+      <% if (enviado) { %>
+        <div class="login-hint" style="color: var(--status-ok); font-size: 14px; margin: 0 0 16px;">
+          Denuncia registrada. A Central de Operacoes foi notificada e vai
+          encaminhar o caso para a praca informada.
+        </div>
+        <a href="/denuncia" class="btn" style="width: 100%; justify-content: center;">Registrar outra denuncia</a>
+      <% } else { %>
+        <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 8px;">
+          Percebeu algo errado em uma praca? Conte pra gente. Nao e preciso
+          se identificar.
+        </p>
+
+        <form method="POST" action="/denuncia">
+          <label for="praca_id">Praca</label>
+          <select id="praca_id" name="praca_id" required style="width: 100%; background: var(--surface-raised); border: 1px solid var(--border-strong); color: var(--text-primary); padding: 10px 12px; border-radius: 7px; font-size: 14px;">
+            <option value="" disabled selected>Selecione a praca</option>
+            <% pracas.forEach((p) => { %>
+              <option value="<%= p.id %>"><%= p.nome %> — <%= p.bairro %></option>
+            <% }) %>
+          </select>
+
+          <label for="tipo">O que esta acontecendo?</label>
+          <select id="tipo" name="tipo" required style="width: 100%; background: var(--surface-raised); border: 1px solid var(--border-strong); color: var(--text-primary); padding: 10px 12px; border-radius: 7px; font-size: 14px;">
+            <option value="" disabled selected>Selecione o tipo</option>
+            <option value="Emergencia / preciso de ajuda agora">Emergencia / preciso de ajuda agora</option>
+            <option value="Vandalismo em equipamento">Vandalismo em equipamento</option>
+            <option value="Comportamento suspeito">Comportamento suspeito</option>
+            <option value="Iluminacao com falha">Iluminacao com falha</option>
+            <option value="Outro">Outro</option>
+          </select>
+
+          <label for="descricao">Detalhes (opcional)</label>
+          <textarea id="descricao" name="descricao" rows="3" maxlength="500" style="width: 100%; background: var(--surface-raised); border: 1px solid var(--border-strong); color: var(--text-primary); padding: 10px 12px; border-radius: 7px; font-size: 14px; font-family: inherit; resize: vertical;"></textarea>
+
+          <button type="submit" class="btn primary">Enviar denuncia</button>
+        </form>
+
+        <% if (erro) { %>
+          <div class="login-error"><%= erro %></div>
+        <% } %>
+
+        <div class="login-hint">
+          Este formulario nao pede nome, e-mail ou telefone. Em caso de
+          emergencia em andamento, ligue 190.
+        </div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>
