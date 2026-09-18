@@ -7,25 +7,30 @@
   <div class="login-shell">
     <div class="login-card">
       <div class="brand">
-        <div class="brand-header">
-          <div class="brand-radar">
+        <div class="brand-recife">
+          <div class="brand-crest" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"></path>
-              <path d="M12 6a6 6 0 1 0 6 6 6 6 0 0 0-6-6zm0 10a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"></path>
-              <path d="M12 12 19 5"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+              <path d="M4 17h16"></path>
+              <path d="M4 21h16"></path>
+              <path d="M7 17v4"></path>
+              <path d="M12 17v4"></path>
+              <path d="M17 17v4"></path>
             </svg>
           </div>
-          <div class="brand-title">
-            <span class="name">Vigia</span>
-            <span class="badge-cicc">CICC &middot; Central de Operações</span>
+          <div class="brand-info" style="text-align: left;">
+            <span class="brand-entity">Prefeitura do Recife</span>
+            <span class="brand-title">COP &middot; Vigia</span>
           </div>
         </div>
-        <p style="color: var(--text-muted); font-size: 12px; margin: 8px 0 0;">Autenticação restrita de operadores de campo</p>
+        <p style="color: var(--text-muted); font-size: 12px; margin: 12px 0 0;">
+          Acesso Restrito &middot; Central Integrada de Operações e Monitoramento
+        </p>
       </div>
 
       <form method="POST" action="/login">
         <div class="form-group">
-          <label for="usuario">Identificador do Operador</label>
+          <label for="usuario">Matrícula / Usuário do Operador</label>
           <input type="text" id="usuario" name="usuario" class="form-control" autocomplete="username" placeholder="Ex: operador" required>
         </div>
 
@@ -35,12 +40,12 @@
         </div>
 
         <button type="submit" class="btn primary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
             <polyline points="10 17 15 12 10 7"></polyline>
             <line x1="15" y1="12" x2="3" y2="12"></line>
           </svg>
-          Acessar Terminal de Operações
+          Acessar Central de Monitoramento
         </button>
       </form>
 
@@ -48,15 +53,15 @@
         <div class="login-error"><%= erro %></div>
       <% } %>
 
-      <div class="login-hint" style="background: var(--bg-surface-raised); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-top: 20px;">
-        <span style="color: var(--text-secondary); font-weight: 500;">Acesso de Demonstração:</span><br>
+      <div class="login-hint" style="background: var(--bg-surface-raised); padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-top: 20px;">
+        <strong style="color: var(--pcr-yellow);">Credenciais de Demonstração:</strong><br>
         <code>operador</code> / <code>vigia2026</code>
       </div>
 
       <div class="login-hint">
-        É cidadão e quer relatar um problema? <br>
-        <a href="/denuncia" style="color: var(--accent); font-weight: 500; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px;">
-          Acessar Canal de Denúncia Cidadã &rarr;
+        É cidadão do Recife e deseja relatar um problema?<br>
+        <a href="/denuncia" style="color: var(--pcr-yellow); font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px;">
+          Acessar Canal Cidadão (Conecta Recife) &rarr;
         </a>
       </div>
     </div>

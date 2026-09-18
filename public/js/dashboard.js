@@ -131,25 +131,25 @@ function renderizarTendencia(dados) {
 
   const ctx = canvas.getContext('2d');
   const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-  gradient.addColorStop(0, 'rgba(245, 158, 11, 0.28)');
-  gradient.addColorStop(1, 'rgba(245, 158, 11, 0.00)');
+  gradient.addColorStop(0, 'rgba(16, 91, 171, 0.35)');
+  gradient.addColorStop(1, 'rgba(16, 91, 171, 0.02)');
 
   graficoInstancia = new Chart(canvas, {
     type: 'line',
     data: {
       labels: dados.map((d) => (d.data && d.data.length >= 5 ? d.data.slice(5) : d.data || '')),
       datasets: [{
-        label: 'Visitantes estimados',
+        label: 'Frequência estimada',
         data: dados.map((d) => Number(d.visitantes) || 0),
-        borderColor: '#f59e0b',
+        borderColor: '#105bab',
         backgroundColor: gradient,
-        borderWidth: 2,
-        tension: 0.35,
+        borderWidth: 2.5,
+        tension: 0.3,
         fill: true,
-        pointRadius: 2,
-        pointHoverRadius: 5,
-        pointBackgroundColor: '#f59e0b',
-        pointBorderColor: '#ffffff'
+        pointRadius: 3,
+        pointHoverRadius: 6,
+        pointBackgroundColor: '#ffcc00',
+        pointBorderColor: '#0e1a2e'
       }]
     },
     options: {
@@ -158,10 +158,10 @@ function renderizarTendencia(dados) {
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: '#18202d',
-          titleColor: '#f1f5f9',
+          backgroundColor: '#0e1a2e',
+          titleColor: '#ffffff',
           bodyColor: '#cbd5e1',
-          borderColor: 'rgba(255, 255, 255, 0.15)',
+          borderColor: 'rgba(16, 91, 171, 0.5)',
           borderWidth: 1,
           padding: 10,
           displayColors: false
