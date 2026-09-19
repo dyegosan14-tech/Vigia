@@ -1259,6 +1259,8 @@ table.data tr:hover td {
   flex-direction: column;
   align-items: center;
   gap: 6px;
+  font: inherit;
+  color: inherit;
 }
 
 .category-card:hover {
@@ -1269,6 +1271,11 @@ table.data tr:hover td {
 .category-card.selected {
   border-color: var(--pcr-yellow);
   background: var(--pcr-blue-soft);
+}
+
+.category-card:focus-visible {
+  outline: 3px solid rgba(255, 204, 0, 0.6);
+  outline-offset: 2px;
 }
 
 .category-card-icon { font-size: 20px; }
