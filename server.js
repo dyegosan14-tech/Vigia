@@ -5,8 +5,21 @@ const path = require('path');
 
 const app = express();
 
+// Evita expor a tecnologia usada pelo servidor em todas as respostas.
+app.disable('x-powered-by');
+app.set('trust proxy', 1);
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+app.use((req, res, next) => {
+  res.set({
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'Referrer-Policy': 'strict-origin-when-cross-origin'
+  });
+  next();
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json({ limit: '500kb' }));
@@ -19,7 +32,8 @@ app.use(session({
   cookie: {
     maxAge: 1000 * 60 * 60 * 8,
     httpOnly: true,
-    sameSite: 'lax'
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production'
   }
 }));
 
@@ -50,7 +64,15 @@ app.use((err, req, res, next) => {
   res.status(500).render('404', { titulo: 'Erro interno no servidor' });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Vigia rodando em http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
+    throw new Error('SESSION_SECRET deve ser configurado em produção.');
+  }
+
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Vigia rodando em http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

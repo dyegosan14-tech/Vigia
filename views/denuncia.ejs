@@ -54,26 +54,26 @@
           <div class="form-group">
             <label>1. Qual situação você gostaria de informar?</label>
             <div class="category-grid">
-              <div class="category-card <%= formDados.tipo === 'Emergencia / preciso de ajuda agora' ? 'selected' : '' %>" data-tipo="Emergencia / preciso de ajuda agora">
+              <button type="button" class="category-card <%= formDados.tipo === 'Emergencia / preciso de ajuda agora' ? 'selected' : '' %>" data-tipo="Emergencia / preciso de ajuda agora" aria-pressed="<%= formDados.tipo === 'Emergencia / preciso de ajuda agora' %>">
                 <span class="category-card-icon">🚨</span>
                 <span class="category-card-title">Ajuda Imediata</span>
-              </div>
-              <div class="category-card <%= formDados.tipo === 'Iluminacao com falha' ? 'selected' : '' %>" data-tipo="Iluminacao com falha">
+              </button>
+              <button type="button" class="category-card <%= formDados.tipo === 'Iluminacao com falha' ? 'selected' : '' %>" data-tipo="Iluminacao com falha" aria-pressed="<%= formDados.tipo === 'Iluminacao com falha' %>">
                 <span class="category-card-icon">💡</span>
                 <span class="category-card-title">Lâmpada Apagada</span>
-              </div>
-              <div class="category-card <%= formDados.tipo === 'Vandalismo em equipamento' ? 'selected' : '' %>" data-tipo="Vandalismo em equipamento">
+              </button>
+              <button type="button" class="category-card <%= formDados.tipo === 'Vandalismo em equipamento' ? 'selected' : '' %>" data-tipo="Vandalismo em equipamento" aria-pressed="<%= formDados.tipo === 'Vandalismo em equipamento' %>">
                 <span class="category-card-icon">🔨</span>
                 <span class="category-card-title">Dano a Equipamento</span>
-              </div>
-              <div class="category-card <%= formDados.tipo === 'Comportamento suspeito' ? 'selected' : '' %>" data-tipo="Comportamento suspeito">
+              </button>
+              <button type="button" class="category-card <%= formDados.tipo === 'Comportamento suspeito' ? 'selected' : '' %>" data-tipo="Comportamento suspeito" aria-pressed="<%= formDados.tipo === 'Comportamento suspeito' %>">
                 <span class="category-card-icon">👁️</span>
                 <span class="category-card-title">Atitude Suspeita</span>
-              </div>
-              <div class="category-card <%= formDados.tipo === 'Outro' ? 'selected' : '' %>" data-tipo="Outro">
+              </button>
+              <button type="button" class="category-card <%= formDados.tipo === 'Outro' ? 'selected' : '' %>" data-tipo="Outro" aria-pressed="<%= formDados.tipo === 'Outro' %>">
                 <span class="category-card-icon">📋</span>
                 <span class="category-card-title">Outro Relato</span>
-              </div>
+              </button>
             </div>
           </div>
 
@@ -127,7 +127,9 @@
     cards.forEach(card => {
       card.addEventListener('click', () => {
         cards.forEach(c => c.classList.remove('selected'));
+        cards.forEach(c => c.setAttribute('aria-pressed', 'false'));
         card.classList.add('selected');
+        card.setAttribute('aria-pressed', 'true');
         inputTipo.value = card.getAttribute('data-tipo');
       });
     });
@@ -137,6 +139,7 @@
         if (!inputTipo.value) {
           e.preventDefault();
           alert('Por favor, escolha uma das categorias de relato acima.');
+          cards[0]?.focus();
         }
       });
     }

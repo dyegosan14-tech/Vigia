@@ -1,6 +1,5 @@
 const express = require('express');
 const crypto = require('crypto');
-const router = express.Router();
 const pracas = require('../data/pracas.json');
 const ocorrencias = require('../data/ocorrencias.json');
 const { salvarOcorrencias } = require('../utils/persistencia');
@@ -29,54 +28,61 @@ function autenticarDispositivo(req, res, next) {
   next();
 }
 
-router.post('/eventos', autenticarDispositivo, (req, res) => {
-  const { praca_id, tipo, severidade } = req.body || {};
+function criarRouter({ salvar = salvarOcorrencias } = {}) {
+  const router = express.Router();
 
-  if (!praca_id || !tipo || typeof praca_id !== 'string' || typeof tipo !== 'string') {
-    return res.status(400).json({ erro: 'Informe praca_id e tipo do evento como textos válidos.' });
-  }
+  router.post('/eventos', autenticarDispositivo, (req, res) => {
+    const { praca_id, tipo, severidade } = req.body || {};
 
-  const pracaIdLimpo = praca_id.trim();
-  if (!pracas.some((p) => p.id === pracaIdLimpo)) {
-    return res.status(400).json({ erro: `praca_id desconhecido: ${pracaIdLimpo}` });
-  }
+    if (!praca_id || !tipo || typeof praca_id !== 'string' || typeof tipo !== 'string') {
+      return res.status(400).json({ erro: 'Informe praca_id e tipo do evento como textos válidos.' });
+    }
 
-  // Sanitiza o tipo: remove tags HTML, caracteres de controle e limita tamanho
-  const tipoSanitizado = tipo
-    .replace(/<[^>]*>/g, '')
-    .replace(/[\x00-\x1F\x7F]/g, '')
-    .trim()
-    .slice(0, 120);
+    const pracaIdLimpo = praca_id.trim();
+    if (!pracas.some((p) => p.id === pracaIdLimpo)) {
+      return res.status(400).json({ erro: `praca_id desconhecido: ${pracaIdLimpo}` });
+    }
 
-  if (!tipoSanitizado) {
-    return res.status(400).json({ erro: 'O tipo do evento não pode ser vazio.' });
-  }
+    // Sanitiza o tipo: remove tags HTML, caracteres de controle e limita tamanho
+    const tipoSanitizado = tipo
+      .replace(/<[^>]*>/g, '')
+      .replace(/[\x00-\x1F\x7F]/g, '')
+      .trim()
+      .slice(0, 120);
 
-  const severidadeValidada = SEVERIDADES_VALIDAS.includes(severidade) ? severidade : 'media';
-  const idUnico = `sensor-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
+    if (!tipoSanitizado) {
+      return res.status(400).json({ erro: 'O tipo do evento não pode ser vazio.' });
+    }
 
-  const novoEvento = {
-    id: idUnico,
-    praca_id: pracaIdLimpo,
-    tipo: tipoSanitizado,
-    severidade: severidadeValidada,
-    timestamp: new Date().toISOString(),
-    status: 'aberto',
-    origem: 'sensor'
-  };
+    const severidadeValidada = SEVERIDADES_VALIDAS.includes(severidade) ? severidade : 'media';
+    const idUnico = `sensor-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
 
-  console.log(
-    `[Evento recebido] praca=${pracaIdLimpo} tipo=${tipoSanitizado} severidade=${severidadeValidada}`
-  );
+    const novoEvento = {
+      id: idUnico,
+      praca_id: pracaIdLimpo,
+      tipo: tipoSanitizado,
+      severidade: severidadeValidada,
+      timestamp: new Date().toISOString(),
+      status: 'aberto',
+      origem: 'sensor'
+    };
 
-  ocorrencias.unshift(novoEvento);
-  salvarOcorrencias(ocorrencias);
+    console.log(
+      `[Evento recebido] praca=${pracaIdLimpo} tipo=${tipoSanitizado} severidade=${severidadeValidada}`
+    );
 
-  res.status(201).json({ recebido: true, id: novoEvento.id });
-});
+    ocorrencias.unshift(novoEvento);
+    salvar(ocorrencias);
 
-router.get('/status', (req, res) => {
-  res.json({ status: 'ok', servico: 'Vigia - camada central', hora: new Date().toISOString() });
-});
+    res.status(201).json({ recebido: true, id: novoEvento.id });
+  });
 
-module.exports = router;
+  router.get('/status', (req, res) => {
+    res.json({ status: 'ok', servico: 'Vigia - camada central', hora: new Date().toISOString() });
+  });
+
+  return router;
+}
+
+module.exports = criarRouter();
+module.exports.criarRouter = criarRouter;
