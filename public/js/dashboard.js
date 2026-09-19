@@ -41,11 +41,21 @@ function iniciarMenuMobile() {
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
     sidebar.classList.toggle('open');
+    btn.setAttribute('aria-expanded', String(sidebar.classList.contains('open')));
   });
 
   document.addEventListener('click', (e) => {
     if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== btn) {
       sidebar.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+      sidebar.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      btn.focus();
     }
   });
 }
