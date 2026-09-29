@@ -117,3 +117,12 @@ Veja a seção "De protótipo a produção" em `docs/ARQUITETURA.md` para a
 lista completa — os principais pontos são trocar os arquivos JSON por um
 banco de dados de verdade e conectar o endpoint de eventos aos sensores
 físicos.
+
+
+---
+
+## 👨‍💻 Autor
+
+Desenvolvido por **Dyego Assis** ([@dyegosan14-tech](https://github.com/dyegosan14-tech)).
+
+[![GitHub Profile](https://img.shields.io/badge/GitHub-dyegosan14--tech-181717?style=for-the-badge&logo=github)](https://github.com/dyegosan14-tech)
